@@ -1422,6 +1422,12 @@ export default function App() {
 
           <ScriptMockup />
 
+          <img
+            src="/FixtureGenerator.gif"
+            alt="Fixture generator demo"
+            style={{ width: "100%", borderRadius: 12, marginTop: 24, marginBottom: 8 }}
+          />
+
           <div
             style={{
               marginTop: 24,
