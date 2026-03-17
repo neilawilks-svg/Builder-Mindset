@@ -1544,6 +1544,31 @@ export default function App() {
               <TournamentMockup />
             </div>
 
+            {/* Screenshots gallery */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 32 }}>
+              <div>
+                <img
+                  src="/Admin1.png"
+                  alt="Admin view 1"
+                  style={{ width: "100%", borderRadius: 12, display: "block", border: `1px solid ${COLORS.lightGray}` }}
+                />
+              </div>
+              <div>
+                <img
+                  src="/Admin2.png"
+                  alt="Admin view 2"
+                  style={{ width: "100%", borderRadius: 12, display: "block", border: `1px solid ${COLORS.lightGray}` }}
+                />
+              </div>
+              <div style={{ gridColumn: "1 / -1" }}>
+                <img
+                  src="/Parent_View.png"
+                  alt="Parent view"
+                  style={{ width: "100%", borderRadius: 12, display: "block", border: `1px solid ${COLORS.lightGray}` }}
+                />
+              </div>
+            </div>
+
             <div
               style={{
                 padding: "20px 24px",
