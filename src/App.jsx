@@ -114,9 +114,8 @@ function GlobalStyles() {
         45%  { transform: scale(1.14); }
         100% { transform: scale(1); }
       }
-      /* Nuclear overrides — defeat any extension or cascade */
+      /* Force h1 white regardless of browser extension overrides */
       #hero-title { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
-      .section-intro-p { text-align: center !important; }
     `}</style>
   );
 }
@@ -1000,7 +999,7 @@ export default function App() {
           }}
         />
         <div
-          style={{ ...wrap, position: "relative", zIndex: 1, textAlign: "center" }}
+          style={{ ...wrap, position: "relative", zIndex: 1 }}
         >
           <div
             style={{
@@ -1038,7 +1037,7 @@ export default function App() {
               lineHeight: 1.65,
               color: "rgba(255,255,255,0.85)",
               maxWidth: 600,
-              margin: "0 auto 36px",
+              margin: "0 0 36px",
               opacity: mounted ? 1 : 0,
               transform: mounted ? "translateY(0)" : "translateY(20px)",
               transition: "opacity 0.6s ease 420ms, transform 0.6s ease 420ms",
@@ -1052,7 +1051,6 @@ export default function App() {
               display: "flex",
               flexWrap: "wrap",
               gap: 12,
-              justifyContent: "center",
               opacity: mounted ? 1 : 0,
               transform: mounted ? "translateY(0)" : "translateY(16px)",
               transition: "opacity 0.6s ease 560ms, transform 0.6s ease 560ms",
@@ -1082,7 +1080,6 @@ export default function App() {
               marginTop: 56,
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
               gap: 10,
               color: "rgba(255,255,255,0.4)",
               fontSize: 13,
@@ -1125,7 +1122,6 @@ export default function App() {
               color: COLORS.slalomBlue,
               marginBottom: 12,
               textTransform: "uppercase",
-              textAlign: "center",
             }}
           >
             The Catalyst
@@ -1136,20 +1132,17 @@ export default function App() {
               fontWeight: 800,
               margin: "0 0 16px",
               lineHeight: 1.2,
-              textAlign: "center",
             }}
           >
             Under-7s Rugby Chaos
           </h2>
           <p
-            className="section-intro-p"
             style={{
               fontSize: 17,
               color: COLORS.darkGray,
               lineHeight: 1.7,
               maxWidth: 650,
-              margin: "0 auto 40px",
-              textAlign: "center",
+              marginBottom: 40,
             }}
           >
             Volunteering as U7s Team Manager seemed simple — count the hotdogs for
