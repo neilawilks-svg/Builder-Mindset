@@ -34,7 +34,7 @@ const COLORS = {
   whatsappGreen: "#25D366",
 };
 
-function useInView(threshold = 0.15) {
+function useInView(threshold = 0.05, rootMargin = "0px 0px 80px 0px") {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
@@ -47,11 +47,11 @@ function useInView(threshold = 0.15) {
           obs.unobserve(el);
         }
       },
-      { threshold }
+      { threshold, rootMargin }
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, [threshold]);
+  }, [threshold, rootMargin]);
   return [ref, visible];
 }
 
@@ -127,8 +127,8 @@ function Section({ children, className = "", id }) {
       className={className}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(40px)",
-        transition: "opacity 0.7s ease, transform 0.7s ease",
+        transform: visible ? "translateY(0)" : "translateY(48px)",
+        transition: "opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1)",
       }}
     >
       {children}
@@ -722,16 +722,7 @@ function StatCard({ value, label, index = 0 }) {
 }
 
 function ToolCard({ name, url, description, tag, index = 0 }) {
-  const [wrapRef, visible] = useInView(0.1);
   return (
-    <div
-      ref={wrapRef}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(16px)",
-        transition: `opacity 0.5s ease ${index * 100}ms, transform 0.5s ease ${index * 100}ms`,
-      }}
-    >
     <a
       href={url}
       target="_blank"
@@ -745,6 +736,7 @@ function ToolCard({ name, url, description, tag, index = 0 }) {
         textDecoration: "none",
         transition: "border-color 0.2s, box-shadow 0.2s, transform 0.2s",
         cursor: "pointer",
+        animation: `fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) ${index * 100}ms both`,
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.borderColor = COLORS.slalomBlue;
@@ -799,15 +791,12 @@ function ToolCard({ name, url, description, tag, index = 0 }) {
         {description}
       </div>
     </a>
-    </div>
   );
 }
 
 function LevelBadge({ level, color }) {
-  const [ref, visible] = useInView(0.3);
   return (
     <div
-      ref={ref}
       style={{
         display: "inline-flex",
         alignItems: "center",
@@ -820,9 +809,7 @@ function LevelBadge({ level, color }) {
         fontWeight: 700,
         letterSpacing: 0.5,
         marginBottom: 16,
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateX(0)" : "translateX(-18px)",
-        transition: "opacity 0.5s ease, transform 0.5s ease",
+        animation: "slideInLeft 0.5s cubic-bezier(0.22,1,0.36,1) both",
       }}
     >
       LEVEL {level}
@@ -831,10 +818,8 @@ function LevelBadge({ level, color }) {
 }
 
 function StaircaseStep({ level, title, tools, description, color, active, onClick, index = 0 }) {
-  const [ref, visible] = useInView(0.1);
   return (
     <div
-      ref={ref}
       onClick={onClick}
       role="button"
       tabIndex={0}
@@ -845,10 +830,9 @@ function StaircaseStep({ level, title, tools, description, color, active, onClic
         borderRadius: 12,
         border: active ? `2px solid ${color}` : `1px solid ${COLORS.lightGray}`,
         background: active ? `${color}10` : COLORS.white,
-        transition: `border 0.3s ease, background 0.3s ease, opacity 0.5s ease ${index * 120}ms, transform 0.5s ease ${index * 120}ms`,
+        transition: "border 0.3s ease, background 0.3s ease",
         outline: "none",
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(18px)",
+        animation: `fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) ${index * 120}ms both`,
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
@@ -1013,7 +997,7 @@ export default function App() {
           }}
         />
         <div
-          style={{ ...wrap, position: "relative", zIndex: 1 }}
+          style={{ ...wrap, position: "relative", zIndex: 1, textAlign: "center" }}
         >
           <div
             style={{
@@ -1036,9 +1020,10 @@ export default function App() {
               fontWeight: 800,
               lineHeight: 1.05,
               margin: "0 0 28px",
+              color: COLORS.white,
               opacity: mounted ? 1 : 0,
-              transform: mounted ? "translateY(0)" : "translateY(24px)",
-              transition: "opacity 0.6s ease 260ms, transform 0.6s ease 260ms",
+              transform: mounted ? "translateY(0)" : "translateY(28px)",
+              transition: "opacity 0.7s ease 260ms, transform 0.7s cubic-bezier(0.22,1,0.36,1) 260ms",
             }}
           >
             The Builder<br />Mindset
@@ -1049,7 +1034,7 @@ export default function App() {
               lineHeight: 1.65,
               color: "rgba(255,255,255,0.85)",
               maxWidth: 600,
-              margin: "0 0 36px",
+              margin: "0 auto 36px",
               opacity: mounted ? 1 : 0,
               transform: mounted ? "translateY(0)" : "translateY(20px)",
               transition: "opacity 0.6s ease 420ms, transform 0.6s ease 420ms",
@@ -1063,6 +1048,7 @@ export default function App() {
               display: "flex",
               flexWrap: "wrap",
               gap: 12,
+              justifyContent: "center",
               opacity: mounted ? 1 : 0,
               transform: mounted ? "translateY(0)" : "translateY(16px)",
               transition: "opacity 0.6s ease 560ms, transform 0.6s ease 560ms",
@@ -1092,6 +1078,7 @@ export default function App() {
               marginTop: 56,
               display: "flex",
               alignItems: "center",
+              justifyContent: "center",
               gap: 10,
               color: "rgba(255,255,255,0.4)",
               fontSize: 13,
@@ -1134,6 +1121,7 @@ export default function App() {
               color: COLORS.slalomBlue,
               marginBottom: 12,
               textTransform: "uppercase",
+              textAlign: "center",
             }}
           >
             The Catalyst
@@ -1144,6 +1132,7 @@ export default function App() {
               fontWeight: 800,
               margin: "0 0 16px",
               lineHeight: 1.2,
+              textAlign: "center",
             }}
           >
             Under-7s Rugby Chaos
@@ -1154,7 +1143,8 @@ export default function App() {
               color: COLORS.darkGray,
               lineHeight: 1.7,
               maxWidth: 650,
-              marginBottom: 40,
+              margin: "0 auto 40px",
+              textAlign: "center",
             }}
           >
             Volunteering as U7s Team Manager seemed simple — count the hotdogs for
