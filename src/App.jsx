@@ -1301,6 +1301,12 @@ export default function App() {
               </p>
             </div>
 
+            <img
+              src="/TeamAssignment.gif"
+              alt="Team assignment demo"
+              style={{ width: "100%", borderRadius: 12, marginBottom: 24 }}
+            />
+
             <SheetMockup />
 
             <div
