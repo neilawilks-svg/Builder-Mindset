@@ -114,6 +114,9 @@ function GlobalStyles() {
         45%  { transform: scale(1.14); }
         100% { transform: scale(1); }
       }
+      /* Nuclear overrides — defeat any extension or cascade */
+      #hero-title { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+      .section-intro-p { text-align: center !important; }
     `}</style>
   );
 }
@@ -1015,12 +1018,13 @@ export default function App() {
             A personal perspective
           </div>
           <h1
+            id="hero-title"
             style={{
               fontSize: "clamp(40px, 7vw, 72px)",
               fontWeight: 800,
               lineHeight: 1.05,
               margin: "0 0 28px",
-              color: COLORS.white,
+              color: "#ffffff",
               opacity: mounted ? 1 : 0,
               transform: mounted ? "translateY(0)" : "translateY(28px)",
               transition: "opacity 0.7s ease 260ms, transform 0.7s cubic-bezier(0.22,1,0.36,1) 260ms",
@@ -1138,6 +1142,7 @@ export default function App() {
             Under-7s Rugby Chaos
           </h2>
           <p
+            className="section-intro-p"
             style={{
               fontSize: 17,
               color: COLORS.darkGray,
