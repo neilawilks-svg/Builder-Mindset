@@ -1,16 +1,37 @@
 import { useState, useEffect, useRef } from "react";
 
 const COLORS = {
+  // Brand
   slalomBlue: "#0C62FB",
   slalomDark: "#002FAF",
   cyan: "#1BE1F2",
   coralRed: "#FF4D5F",
   purple: "#C7B9FF",
   chartreuse: "#DEF14D",
+  // Neutrals
   black: "#000000",
   darkGray: "#666666",
+  midGray: "#3c4043",
   lightGray: "#E8E8E8",
+  borderGray: "#f0f0f0",
+  surfaceGray: "#f1f3f4",
+  surfaceLight: "#f8f9fa",
   white: "#FFFFFF",
+  // Semantic tag backgrounds
+  tagGreenBg: "#E8F5E9",
+  tagBlueBg: "#E3F2FD",
+  tagYellowBg: COLORS.tagYellowBg,
+  tagPinkBg: "#FCE4EC",
+  tagGreenText: COLORS.tagGreenText,
+  tagBlueText: "#1565C0",
+  tagYellowText: COLORS.tagYellowText,
+  // Section accent backgrounds
+  blueAccentBg: "#EBF2FF",
+  blueTagBg: "#E8F0FE",
+  coralAccentBg: "#FFEEF0",
+  // Third-party brand
+  googleGreen: "#34A853",
+  whatsappGreen: "#25D366",
 };
 
 function useInView(threshold = 0.15) {
@@ -72,7 +93,7 @@ function Nav({ scrollY }) {
         left: 0,
         right: 0,
         zIndex: 100,
-        background: solid ? "rgba(0,47,175,0.97)" : "transparent",
+        background: solid ? "rgba(0,47,175,0.95)" : "transparent",
         backdropFilter: solid ? "blur(12px)" : "none",
         borderBottom: solid ? "1px solid rgba(255,255,255,0.1)" : "none",
         transition: "background 0.3s, border 0.3s",
@@ -169,7 +190,7 @@ function Nav({ scrollY }) {
       {open && (
         <div
           style={{
-            background: "rgba(0,47,175,0.98)",
+            background: "rgba(0,47,175,0.95)",
             borderTop: "1px solid rgba(255,255,255,0.1)",
             padding: "12px 24px 20px",
           }}
@@ -209,12 +230,12 @@ function Nav({ scrollY }) {
 /* ── Visual: Spreadsheet mock ── */
 function SheetMockup() {
   const rows = [
-    { name: "Alex", avail: "✓", team: "1", color: "#E8F5E9" },
-    { name: "Jamie", avail: "✓", team: "1", color: "#E8F5E9" },
-    { name: "Sam", avail: "✓", team: "2", color: "#E3F2FD" },
-    { name: "Riley", avail: "✗", team: "—", color: "#FFF8E1" },
-    { name: "Morgan", avail: "✓", team: "2", color: "#E3F2FD" },
-    { name: "Casey", avail: "✓", team: "3", color: "#FCE4EC" },
+    { name: "Alex", avail: "✓", team: "1", color: COLORS.tagGreenBg },
+    { name: "Jamie", avail: "✓", team: "1", color: COLORS.tagGreenBg },
+    { name: "Sam", avail: "✓", team: "2", color: COLORS.tagBlueBg },
+    { name: "Riley", avail: "✗", team: "—", color: COLORS.tagYellowBg },
+    { name: "Morgan", avail: "✓", team: "2", color: COLORS.tagBlueBg },
+    { name: "Casey", avail: "✓", team: "3", color: COLORS.tagPinkBg },
   ];
   return (
     <div
@@ -229,7 +250,7 @@ function SheetMockup() {
       {/* Sheet chrome */}
       <div
         style={{
-          background: "#f1f3f4",
+          background: COLORS.surfaceGray,
           padding: "10px 16px",
           borderBottom: `1px solid ${COLORS.lightGray}`,
           display: "flex",
@@ -237,17 +258,17 @@ function SheetMockup() {
           gap: 8,
         }}
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#34A853">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill={COLORS.googleGreen}>
           <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z" />
         </svg>
-        <span style={{ fontSize: 13, fontWeight: 600, color: "#3c4043" }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.midGray }}>
           U7s Availability Tracker.xlsx
         </span>
         <span
           style={{
             marginLeft: "auto",
             fontSize: 11,
-            background: "#E8F0FE",
+            background: COLORS.blueTagBg,
             color: COLORS.slalomBlue,
             padding: "2px 8px",
             borderRadius: 4,
@@ -263,8 +284,8 @@ function SheetMockup() {
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 80px 80px",
-          background: "#f8f9fa",
-          padding: "8px 16px",
+          background: COLORS.surfaceLight,
+          padding: "9px 16px",
           borderBottom: `1px solid ${COLORS.lightGray}`,
         }}
       >
@@ -293,7 +314,7 @@ function SheetMockup() {
             gridTemplateColumns: "1fr 80px 80px",
             padding: "9px 16px",
             borderBottom: `1px solid #f0f0f0`,
-            background: r.avail === "✗" ? "#fafafa" : COLORS.white,
+            background: r.avail === "✗" ? COLORS.surfaceLight : COLORS.white,
           }}
         >
           <span style={{ fontSize: 14, color: COLORS.black, fontWeight: 500 }}>{r.name}</span>
@@ -301,7 +322,7 @@ function SheetMockup() {
             style={{
               fontSize: 14,
               fontWeight: 700,
-              color: r.avail === "✓" ? "#2E7D32" : COLORS.darkGray,
+              color: r.avail === "✓" ? COLORS.tagGreenText : COLORS.darkGray,
             }}
           >
             {r.avail}
@@ -328,7 +349,7 @@ function SheetMockup() {
       <div
         style={{
           padding: "10px 16px",
-          background: "#f8f9fa",
+          background: COLORS.surfaceLight,
           fontSize: 12,
           color: COLORS.darkGray,
           fontStyle: "italic",
@@ -346,7 +367,7 @@ function ScriptMockup() {
 
   const buttons = [
     { label: "📋 Generate Fixtures", color: COLORS.slalomBlue },
-    { label: "📱 Send WhatsApp Blast", color: "#25D366" },
+    { label: "📱 Send WhatsApp Blast", color: COLORS.whatsappGreen },
     { label: "💳 Reconcile RFU Payments", color: COLORS.coralRed },
   ];
 
@@ -362,7 +383,7 @@ function ScriptMockup() {
     >
       <div
         style={{
-          background: "#f1f3f4",
+          background: COLORS.surfaceGray,
           padding: "10px 16px",
           borderBottom: `1px solid ${COLORS.lightGray}`,
           display: "flex",
@@ -370,22 +391,22 @@ function ScriptMockup() {
           gap: 8,
         }}
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#34A853">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill={COLORS.googleGreen}>
           <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z" />
         </svg>
-        <span style={{ fontSize: 13, fontWeight: 600, color: "#3c4043" }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.midGray }}>
           U7s Admin Hub — One-Click Automations
         </span>
       </div>
 
-      <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 12 }}>
         {buttons.map((b) => (
           <button
             key={b.label}
             onClick={() => setActive(b.label)}
             style={{
-              background: active === b.label ? b.color : COLORS.white,
-              color: active === b.label ? COLORS.white : b.color,
+              background: b.color,
+              color: COLORS.white,
               border: `2px solid ${b.color}`,
               borderRadius: 8,
               padding: "12px 20px",
@@ -401,15 +422,15 @@ function ScriptMockup() {
           >
             {b.label}
             {active === b.label && (
-              <span style={{ fontSize: 12, opacity: 0.85 }}>✓ Done</span>
+              <span style={{ fontSize: 12, opacity: 0.9 }}>✓ Done</span>
             )}
           </button>
         ))}
         <div
           style={{
             marginTop: 4,
-            padding: "10px 14px",
-            background: "#f8f9fa",
+            padding: "10px 16px",
+            background: COLORS.surfaceLight,
             borderRadius: 8,
             fontSize: 12,
             color: COLORS.darkGray,
@@ -435,7 +456,7 @@ function TournamentMockup() {
     { home: "East Eagles", away: "South Bears", pitch: "B", time: "10:00" },
     { home: "West Wolves", away: "City Lions", pitch: "C", time: "10:20" },
   ];
-  const pitchColors = { A: "#EBF2FF", B: "#E8F5E9", C: "#FFF8E1" };
+  const pitchColors = { A: COLORS.blueAccentBg, B: COLORS.tagGreenBg, C: COLORS.tagYellowBg };
 
   return (
     <div
@@ -482,7 +503,7 @@ function TournamentMockup() {
       {/* Constraints bar */}
       <div
         style={{
-          background: "#f8f9fa",
+          background: COLORS.surfaceLight,
           padding: "10px 20px",
           borderBottom: `1px solid ${COLORS.lightGray}`,
           display: "flex",
@@ -499,7 +520,7 @@ function TournamentMockup() {
                 fontWeight: 600,
                 padding: "3px 10px",
                 borderRadius: 99,
-                background: "#EBF2FF",
+                background: COLORS.blueAccentBg,
                 color: COLORS.slalomBlue,
               }}
             >
@@ -569,7 +590,7 @@ function TournamentMockup() {
       <div
         style={{
           padding: "10px 20px",
-          background: "#f8f9fa",
+          background: COLORS.surfaceLight,
           fontSize: 12,
           color: COLORS.darkGray,
           fontStyle: "italic",
@@ -622,7 +643,7 @@ function ToolCard({ name, url, description, tag }) {
         display: "block",
         background: COLORS.white,
         borderRadius: 12,
-        padding: "20px 24px",
+        padding: "24px",
         border: `1px solid ${COLORS.lightGray}`,
         textDecoration: "none",
         transition: "border-color 0.2s, box-shadow 0.2s, transform 0.2s",
@@ -649,16 +670,16 @@ function ToolCard({ name, url, description, tag }) {
             borderRadius: 99,
             background:
               tag === "Free"
-                ? "#E8F5E9"
+                ? COLORS.tagGreenBg
                 : tag === "Free tier"
-                ? "#E3F2FD"
-                : "#FFF8E1",
+                ? COLORS.tagBlueBg
+                : COLORS.tagYellowBg,
             color:
               tag === "Free"
-                ? "#2E7D32"
+                ? COLORS.tagGreenText
                 : tag === "Free tier"
-                ? "#1565C0"
-                : "#F57F17",
+                ? COLORS.tagBlueText
+                : COLORS.tagYellowText,
           }}
         >
           {tag}
@@ -715,7 +736,7 @@ function StaircaseStep({ level, title, tools, description, color, active, onClic
       onKeyDown={(e) => e.key === "Enter" && onClick()}
       style={{
         cursor: "pointer",
-        padding: "20px 24px",
+        padding: "24px",
         borderRadius: 12,
         border: active ? `2px solid ${color}` : `1px solid ${COLORS.lightGray}`,
         background: active ? `${color}10` : COLORS.white,
@@ -831,7 +852,7 @@ export default function App() {
       style={{
         fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         color: COLORS.black,
-        background: "#FAFAFA",
+        background: COLORS.surfaceLight,
       }}
     >
       <Nav scrollY={scrollY} />
@@ -1007,7 +1028,7 @@ export default function App() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
               gap: 20,
               marginBottom: 40,
             }}
@@ -1081,7 +1102,7 @@ export default function App() {
       {/* ─── LEVEL 1 ─── */}
       <Section id="level1">
         <div style={{ background: COLORS.white }}>
-          <div style={{ ...wrap, padding: "60px 24px 80px" }}>
+          <div style={{ ...wrap, padding: "80px 24px" }}>
             <LevelBadge level={1} color={COLORS.darkGray} />
             <h2
               style={{
@@ -1123,7 +1144,7 @@ export default function App() {
                 margin: "32px 0",
                 padding: "20px 24px",
                 borderLeft: `4px solid ${COLORS.slalomBlue}`,
-                background: "#EBF2FF",
+                background: COLORS.blueAccentBg,
                 borderRadius: "0 12px 12px 0",
               }}
             >
@@ -1158,8 +1179,8 @@ export default function App() {
             <div
               style={{
                 marginTop: 24,
-                padding: 20,
-                background: "#f8f9fa",
+                padding: 24,
+                background: COLORS.surfaceLight,
                 borderRadius: 12,
                 border: `1px solid ${COLORS.lightGray}`,
               }}
@@ -1176,7 +1197,7 @@ export default function App() {
 
       {/* ─── LEVEL 2 ─── */}
       <Section id="level2">
-        <div style={{ ...wrap, padding: "60px 24px 80px" }}>
+        <div style={{ ...wrap, padding: "80px 24px" }}>
           <LevelBadge level={2} color={COLORS.slalomBlue} />
           <h2
             style={{
@@ -1215,7 +1236,7 @@ export default function App() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
               gap: 16,
               marginBottom: 32,
             }}
@@ -1242,7 +1263,7 @@ export default function App() {
                 style={{
                   background: COLORS.white,
                   borderRadius: 12,
-                  padding: 20,
+                  padding: 24,
                   border: `1px solid ${COLORS.lightGray}`,
                 }}
               >
@@ -1271,7 +1292,7 @@ export default function App() {
           <div
             style={{
               marginTop: 24,
-              padding: 20,
+              padding: 24,
               background: COLORS.white,
               borderRadius: 12,
               border: `1px solid ${COLORS.lightGray}`,
@@ -1288,7 +1309,7 @@ export default function App() {
       {/* ─── LEVEL 3 ─── */}
       <Section id="level3">
         <div style={{ background: COLORS.white }}>
-          <div style={{ ...wrap, padding: "60px 24px 80px" }}>
+          <div style={{ ...wrap, padding: "80px 24px" }}>
             <LevelBadge level={3} color={COLORS.coralRed} />
             <h2
               style={{
@@ -1347,7 +1368,7 @@ export default function App() {
                     borderRadius: 99,
                     fontSize: 13,
                     fontWeight: 600,
-                    background: "#FFEEF0",
+                    background: COLORS.coralAccentBg,
                     color: COLORS.coralRed,
                   }}
                 >
@@ -1361,8 +1382,8 @@ export default function App() {
             <div
               style={{
                 marginTop: 24,
-                padding: 20,
-                background: "#f8f9fa",
+                padding: 24,
+                background: COLORS.surfaceLight,
                 borderRadius: 12,
                 border: `1px solid ${COLORS.lightGray}`,
               }}
@@ -1435,7 +1456,7 @@ export default function App() {
           <div
             style={{
               marginTop: 24,
-              padding: 20,
+              padding: 24,
               background: COLORS.white,
               borderRadius: 12,
               border: `1px solid ${COLORS.lightGray}`,
@@ -1499,7 +1520,7 @@ export default function App() {
             >
               <div
                 style={{
-                  background: "#f8f9fa",
+                  background: COLORS.surfaceLight,
                   borderRadius: 12,
                   padding: 28,
                   border: `1px solid ${COLORS.lightGray}`,
@@ -1530,7 +1551,7 @@ export default function App() {
               </div>
               <div
                 style={{
-                  background: "#f8f9fa",
+                  background: COLORS.surfaceLight,
                   borderRadius: 12,
                   padding: 28,
                   border: `1px solid ${COLORS.lightGray}`,
@@ -1610,7 +1631,7 @@ export default function App() {
           </div>
           <div
             style={{
-              padding: 20,
+              padding: 24,
               background: COLORS.white,
               borderRadius: 12,
               border: `1px solid ${COLORS.lightGray}`,
@@ -1685,7 +1706,7 @@ export default function App() {
                     width: 10,
                     height: 10,
                     borderRadius: "50%",
-                    background: "#2E7D32",
+                    background: COLORS.tagGreenText,
                     display: "inline-block",
                   }}
                 />
