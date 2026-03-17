@@ -58,7 +58,7 @@ function useInView(threshold = 0.15) {
 /* Count up from 0 to target when element enters view */
 function useCountUp(target, duration = 1400) {
   const [count, setCount] = useState(0);
-  const [ref, visible] = useInView(0.4);
+  const [ref, visible] = useInView(0.1);
   useEffect(() => {
     if (!visible || target === 0) return;
     const start = Date.now();
@@ -295,6 +295,7 @@ function Nav({ scrollY, activeSection }) {
 
 /* ── Visual: Spreadsheet mock ── */
 function SheetMockup() {
+  const [sheetRef, sheetVisible] = useInView(0.05);
   const rows = [
     { name: "Alex", avail: "✓", team: "1", color: COLORS.tagGreenBg },
     { name: "Jamie", avail: "✓", team: "1", color: COLORS.tagGreenBg },
@@ -305,6 +306,7 @@ function SheetMockup() {
   ];
   return (
     <div
+      ref={sheetRef}
       style={{
         background: COLORS.white,
         borderRadius: 12,
@@ -698,9 +700,7 @@ function StatCard({ value, label, index = 0 }) {
         border: `1px solid ${COLORS.lightGray}`,
         flex: "1 1 200px",
         boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(20px)",
-        transition: `opacity 0.6s ease ${index * 120}ms, transform 0.6s ease ${index * 120}ms`,
+        animation: `scaleIn 0.55s cubic-bezier(0.22,1,0.36,1) ${index * 130}ms both`,
       }}
     >
       <div
