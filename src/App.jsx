@@ -1148,7 +1148,7 @@ export default function App() {
             Volunteering as U7s Team Manager seemed simple — just confirm who could
             play each week and order the right amount of the hotdogs for post-match
             meals. The reality was a torrent of admin: reconciling RFU registrations
-            snd payments, tracking weekly availability, chasing parents, allocating
+            and payments, tracking weekly availability, chasing parents, allocating
             children to teams, creating fixture schedules and broadcasting updates to
             parents.
           </p>
@@ -1472,7 +1472,7 @@ export default function App() {
               the run up to the tournament. Normally fixture planning would start weeks
               out. In this case we took our learnings and newfound confidence and built
               a web app which we embedded within the website we had built using Google
-              Sites. An admin panel allowed you to controi the variables, easily
+              Sites. An admin panel allowed you to control the variables, easily
               reschedule fixtures at the click of a button when a team inevitably
               dropped in or out and whilst handling a number of requirements; competing
               constraints around pitches, lunch breaks, always playing a team from a
