@@ -1421,120 +1421,26 @@ export default function App() {
           </div>
 
           <ScriptMockup />
-        </div>
 
-        {/* ── Cheshire Minis sub-section ── */}
-        <div style={{ background: COLORS.blueAccentBg, borderTop: `1px solid ${COLORS.lightGray}`, borderBottom: `1px solid ${COLORS.lightGray}` }}>
-          <div style={{ ...wrap, padding: "72px 24px" }}>
+          <img
+            src="/FixtureGenerator.gif"
+            alt="Fixture generator demo"
+            style={{ width: "100%", borderRadius: 12, marginTop: 24, marginBottom: 8 }}
+          />
 
-            {/* Header row */}
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-              <span style={{
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: COLORS.slalomBlue,
-                background: COLORS.blueTagBg,
-                border: `1px solid ${COLORS.slalomBlue}22`,
-                borderRadius: 20,
-                padding: "4px 12px",
-              }}>
-                Case Study
-              </span>
-              <span style={{ fontSize: 12, color: COLORS.darkGray }}>Cheshire Minis Tournament</span>
-            </div>
-
-            <h3 style={{ fontSize: "clamp(22px, 3.5vw, 32px)", fontWeight: 800, margin: "0 0 16px", lineHeight: 1.2 }}>
-              70+ Teams. Fluctuating daily.<br />Scheduled in under an hour.
-            </h3>
-
-            <p style={{ fontSize: 17, color: COLORS.darkGray, lineHeight: 1.75, maxWidth: 680, marginBottom: 40 }}>
-              Fixture planning for a tournament this size normally starts weeks out. We took our
-              learnings, our confidence, and Claude Code — and built a full web app embedded
-              directly into the club's Google Sites. An admin panel let us control all the
-              variables, reschedule fixtures at the click of a button as teams dropped in or out,
-              and handle a web of competing constraints.
-            </p>
-
-            {/* Constraint chips */}
-            <div style={{ marginBottom: 40 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: COLORS.darkGray, marginBottom: 12 }}>
-                Constraints handled automatically
-              </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {[
-                  "Pitch allocation",
-                  "Lunch break windows",
-                  "No repeat opponents from same club",
-                  "Minimum rest time between fixtures",
-                  "Referee assignments",
-                  "Refs don't officiate their own team",
-                  "Refs free when officiating",
-                  "Dynamic rescheduling",
-                ].map((c) => (
-                  <span key={c} style={{
-                    fontSize: 13,
-                    fontWeight: 500,
-                    color: COLORS.slalomDark,
-                    background: COLORS.white,
-                    border: `1px solid ${COLORS.slalomBlue}33`,
-                    borderRadius: 20,
-                    padding: "6px 14px",
-                  }}>
-                    {c}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Stat + gif row */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 24, alignItems: "start" }}>
-              <div style={{
-                background: COLORS.slalomBlue,
-                borderRadius: 16,
-                padding: "36px 24px",
-                color: COLORS.white,
-                textAlign: "center",
-              }}>
-                <div style={{ fontSize: "clamp(48px, 8vw, 72px)", fontWeight: 900, lineHeight: 1 }}>1h</div>
-                <div style={{ fontSize: 14, opacity: 0.85, marginTop: 8, lineHeight: 1.4 }}>
-                  to a working prototype handling all constraints
-                </div>
-                <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.2)", fontSize: 12, opacity: 0.7 }}>
-                  Powered by Claude Code
-                </div>
-              </div>
-
-              <div>
-                <img
-                  src="/FixtureGenerator.gif"
-                  alt="Fixture generator demo"
-                  style={{ width: "100%", borderRadius: 12, display: "block" }}
-                />
-                <p style={{ fontSize: 13, color: COLORS.darkGray, marginTop: 8, lineHeight: 1.5 }}>
-                  The fixture generator in action — one-click scheduling for the full tournament.
-                </p>
-              </div>
-            </div>
-
-            {/* Takeaway */}
-            <div style={{
-              marginTop: 40,
-              padding: "20px 24px",
+          <div
+            style={{
+              marginTop: 24,
+              padding: 24,
               background: COLORS.white,
               borderRadius: 12,
               border: `1px solid ${COLORS.lightGray}`,
-              borderLeft: `4px solid ${COLORS.slalomBlue}`,
-            }}>
-              <p style={{ fontSize: 14, color: COLORS.darkGray, margin: 0, lineHeight: 1.6 }}>
-                <strong style={{ color: COLORS.black }}>Key takeaway:</strong> Every
-                manual admin task is a structured logic puzzle waiting to be automated. The revelation
-                wasn't just the speed — it was realising that with the right tools, complexity stops
-                being a reason not to try.
-              </p>
-            </div>
-
+            }}
+          >
+            <p style={{ fontSize: 14, color: COLORS.darkGray, margin: 0, lineHeight: 1.6 }}>
+              <strong style={{ color: COLORS.black }}>Key takeaway:</strong> Every
+              manual admin task is a structured logic puzzle waiting to be automated.
+            </p>
           </div>
         </div>
       </Section>
@@ -1557,12 +1463,12 @@ export default function App() {
             <p
               style={{
                 fontSize: 14,
-                color: COLORS.slalomBlue,
+                color: COLORS.coralRed,
                 fontWeight: 600,
                 marginBottom: 16,
               }}
             >
-              Claude Code — 60 Teams, 1 App
+              Claude Code — 70+ Teams, 1 App, 1 Hour
             </p>
             <p
               style={{
@@ -1573,68 +1479,85 @@ export default function App() {
                 marginBottom: 32,
               }}
             >
-              The annual Cheshire Minis tournament: I had the task of organising
-              match scheduling for 70+ teams - a number that fluctuated by the day in
-              the run up to the tournament. Normally fixture planning would start weeks
-              out. In this case we took our learnings and newfound confidence and built
-              a web app which we embedded within the website we had built using Google
-              Sites. An admin panel allowed you to control the variables, easily
-              reschedule fixtures at the click of a button when a team inevitably
-              dropped in or out and whilst handling a number of requirements; competing
-              constraints around pitches, lunch breaks, always playing a team from a
-              different clubs, handling time between games so teams weren't sat around
-              waiting for their next fixture too long, assigning referees to officiate
-              games their own team was not involved in - and at a time they were not
-              playing. Within one hour, Claude Code produced a working prototype that
-              handled it all. Admittedly I spent a good chunk of time refining the
-              user experience and operations but it was a revelation.
+              The annual Cheshire Minis tournament: organising match scheduling for 70+ teams —
+              a number that fluctuated by the day in the run-up. Normally fixture planning
+              starts weeks out. We took our learnings and newfound confidence and built a web
+              app embedded directly in the club's Google Sites. An admin panel let you control
+              the variables, reschedule fixtures at the click of a button when a team dropped
+              in or out, and handle a web of competing constraints simultaneously. Within one
+              hour, Claude Code produced a working prototype that handled it all. Admittedly
+              a good chunk of time went into refining the UX — but it was a revelation.
             </p>
 
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 10,
-                marginBottom: 32,
-              }}
-            >
-              {[
-                "Minimum Matches",
-                "Pitch Availability",
-                "Lunch Breaks",
-                "Dynamic Drop-outs",
-                "No Internal Matches",
-              ].map((c) => (
-                <span
-                  key={c}
-                  style={{
-                    padding: "6px 14px",
-                    borderRadius: 99,
-                    fontSize: 13,
-                    fontWeight: 600,
-                    background: COLORS.coralAccentBg,
-                    color: COLORS.coralRed,
-                  }}
-                >
-                  {c}
-                </span>
-              ))}
+            {/* Constraint chips */}
+            <div style={{ marginBottom: 32 }}>
+              <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: COLORS.darkGray, marginBottom: 12 }}>
+                Constraints handled automatically
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {[
+                  "Pitch allocation",
+                  "Lunch break windows",
+                  "No repeat opponents from same club",
+                  "Minimum rest time between fixtures",
+                  "Referee assignments",
+                  "Refs don't officiate their own team",
+                  "Refs free when officiating",
+                  "Dynamic rescheduling",
+                ].map((c) => (
+                  <span
+                    key={c}
+                    style={{
+                      padding: "6px 14px",
+                      borderRadius: 99,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      background: COLORS.coralAccentBg,
+                      color: COLORS.coralRed,
+                    }}
+                  >
+                    {c}
+                  </span>
+                ))}
+              </div>
             </div>
 
-            <TournamentMockup />
+            {/* Stat card + mockup row */}
+            <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: 24, alignItems: "start", marginBottom: 32 }}>
+              <div style={{
+                background: COLORS.coralRed,
+                borderRadius: 16,
+                padding: "36px 28px",
+                color: COLORS.white,
+                textAlign: "center",
+                minWidth: 160,
+              }}>
+                <div style={{ fontSize: "clamp(52px, 8vw, 72px)", fontWeight: 900, lineHeight: 1 }}>1h</div>
+                <div style={{ fontSize: 13, opacity: 0.9, marginTop: 8, lineHeight: 1.4 }}>
+                  to a working prototype handling all constraints
+                </div>
+                <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.25)", fontSize: 11, opacity: 0.7, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  Powered by Claude Code
+                </div>
+              </div>
+
+              <TournamentMockup />
+            </div>
 
             <div
               style={{
-                marginTop: 24,
-                padding: 24,
+                padding: "20px 24px",
                 background: COLORS.surfaceLight,
                 borderRadius: 12,
                 border: `1px solid ${COLORS.lightGray}`,
+                borderLeft: `4px solid ${COLORS.coralRed}`,
               }}
             >
               <p style={{ fontSize: 14, color: COLORS.darkGray, margin: 0, lineHeight: 1.6 }}>
                 <strong style={{ color: COLORS.black }}>Key takeaway:</strong> Prototyping
-                complex logic is no longer measured in weeks, but in hours.
+                complex logic is no longer measured in weeks, but in hours. The revelation
+                wasn't just the speed — it was realising that with the right tools, complexity
+                stops being a reason not to try.
               </p>
             </div>
           </div>
