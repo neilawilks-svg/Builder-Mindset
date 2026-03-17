@@ -20,11 +20,11 @@ const COLORS = {
   // Semantic tag backgrounds
   tagGreenBg: "#E8F5E9",
   tagBlueBg: "#E3F2FD",
-  tagYellowBg: COLORS.tagYellowBg,
+  tagYellowBg: "#FFF8E1",
   tagPinkBg: "#FCE4EC",
-  tagGreenText: COLORS.tagGreenText,
+  tagGreenText: "#2E7D32",
   tagBlueText: "#1565C0",
-  tagYellowText: COLORS.tagYellowText,
+  tagYellowText: "#F57F17",
   // Section accent backgrounds
   blueAccentBg: "#EBF2FF",
   blueTagBg: "#E8F0FE",
@@ -55,6 +55,69 @@ function useInView(threshold = 0.15) {
   return [ref, visible];
 }
 
+/* Count up from 0 to target when element enters view */
+function useCountUp(target, duration = 1400) {
+  const [count, setCount] = useState(0);
+  const [ref, visible] = useInView(0.4);
+  useEffect(() => {
+    if (!visible || target === 0) return;
+    const start = Date.now();
+    const step = () => {
+      const t = Math.min((Date.now() - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setCount(Math.round(eased * target));
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [visible, target, duration]);
+  return [ref, count, visible];
+}
+
+/* Track which section is currently in the viewport for nav highlighting */
+function useActiveSection(ids) {
+  const [active, setActive] = useState(null);
+  useEffect(() => {
+    const els = ids.map((id) => document.getElementById(id)).filter(Boolean);
+    if (!els.length) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActive(e.target.id);
+        });
+      },
+      { threshold: 0.25, rootMargin: "-56px 0px -35% 0px" }
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, [ids]);
+  return active;
+}
+
+/* Global CSS keyframe definitions */
+function GlobalStyles() {
+  return (
+    <style>{`
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-18px); }
+        to   { opacity: 1; transform: translateX(0); }
+      }
+      @keyframes scaleIn {
+        from { opacity: 0; transform: scale(0.82); }
+        to   { opacity: 1; transform: scale(1); }
+      }
+      @keyframes countPop {
+        0%   { transform: scale(1); }
+        45%  { transform: scale(1.14); }
+        100% { transform: scale(1); }
+      }
+    `}</style>
+  );
+}
+
 function Section({ children, className = "", id }) {
   const [ref, visible] = useInView(0.1);
   return (
@@ -74,7 +137,7 @@ function Section({ children, className = "", id }) {
 }
 
 /* ── Sticky Nav ── */
-function Nav({ scrollY }) {
+function Nav({ scrollY, activeSection }) {
   const [open, setOpen] = useState(false);
   const links = [
     { label: "Catalyst", href: "#catalyst" },
@@ -136,21 +199,24 @@ function Nav({ scrollY }) {
               key={l.href}
               href={l.href}
               style={{
-                color: "rgba(255,255,255,0.8)",
+                color: activeSection === l.href.slice(1) ? COLORS.white : "rgba(255,255,255,0.75)",
                 fontSize: 13,
                 fontWeight: 600,
                 textDecoration: "none",
                 padding: "6px 10px",
                 borderRadius: 6,
                 transition: "color 0.2s, background 0.2s",
+                background: activeSection === l.href.slice(1) ? "rgba(255,255,255,0.15)" : "transparent",
+                position: "relative",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = COLORS.white;
-                e.currentTarget.style.background = "rgba(255,255,255,0.1)";
+                e.currentTarget.style.background = "rgba(255,255,255,0.15)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = "rgba(255,255,255,0.8)";
-                e.currentTarget.style.background = "transparent";
+                const isActive = activeSection === l.href.slice(1);
+                e.currentTarget.style.color = isActive ? COLORS.white : "rgba(255,255,255,0.75)";
+                e.currentTarget.style.background = isActive ? "rgba(255,255,255,0.15)" : "transparent";
               }}
             >
               {l.label}
@@ -306,7 +372,7 @@ function SheetMockup() {
       </div>
 
       {/* Data rows */}
-      {rows.map((r) => (
+      {rows.map((r, i) => (
         <div
           key={r.name}
           style={{
@@ -315,6 +381,9 @@ function SheetMockup() {
             padding: "9px 16px",
             borderBottom: `1px solid #f0f0f0`,
             background: r.avail === "✗" ? COLORS.surfaceLight : COLORS.white,
+            opacity: sheetVisible ? 1 : 0,
+            transform: sheetVisible ? "translateX(0)" : "translateX(-10px)",
+            transition: `opacity 0.4s ease ${i * 70}ms, transform 0.4s ease ${i * 70}ms`,
           }}
         >
           <span style={{ fontSize: 14, color: COLORS.black, fontWeight: 500 }}>{r.name}</span>
@@ -603,9 +672,24 @@ function TournamentMockup() {
   );
 }
 
-function StatCard({ value, label }) {
+function StatCard({ value, label, index = 0 }) {
+  const prefix = value.replace(/[0-9]/g, "");
+  const numeric = parseInt(value.replace(/[^0-9]/g, ""), 10) || 0;
+  const [ref, count, visible] = useCountUp(numeric);
+  const [popped, setPopped] = useState(false);
+  const prevCount = useRef(0);
+  useEffect(() => {
+    if (count !== prevCount.current) {
+      prevCount.current = count;
+      if (count === numeric && numeric > 0) {
+        setPopped(true);
+        setTimeout(() => setPopped(false), 500);
+      }
+    }
+  }, [count, numeric]);
   return (
     <div
+      ref={ref}
       style={{
         background: COLORS.white,
         borderRadius: 12,
@@ -614,6 +698,9 @@ function StatCard({ value, label }) {
         border: `1px solid ${COLORS.lightGray}`,
         flex: "1 1 200px",
         boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(20px)",
+        transition: `opacity 0.6s ease ${index * 120}ms, transform 0.6s ease ${index * 120}ms`,
       }}
     >
       <div
@@ -622,9 +709,10 @@ function StatCard({ value, label }) {
           fontWeight: 800,
           color: COLORS.slalomBlue,
           lineHeight: 1,
+          animation: popped ? "countPop 0.45s ease" : "none",
         }}
       >
-        {value}
+        {prefix}{numeric === 0 ? value : count}
       </div>
       <div style={{ fontSize: 14, color: COLORS.darkGray, marginTop: 12, fontWeight: 500 }}>
         {label}
@@ -633,8 +721,17 @@ function StatCard({ value, label }) {
   );
 }
 
-function ToolCard({ name, url, description, tag }) {
+function ToolCard({ name, url, description, tag, index = 0 }) {
+  const [wrapRef, visible] = useInView(0.1);
   return (
+    <div
+      ref={wrapRef}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(16px)",
+        transition: `opacity 0.5s ease ${index * 100}ms, transform 0.5s ease ${index * 100}ms`,
+      }}
+    >
     <a
       href={url}
       target="_blank"
@@ -702,12 +799,15 @@ function ToolCard({ name, url, description, tag }) {
         {description}
       </div>
     </a>
+    </div>
   );
 }
 
 function LevelBadge({ level, color }) {
+  const [ref, visible] = useInView(0.3);
   return (
     <div
+      ref={ref}
       style={{
         display: "inline-flex",
         alignItems: "center",
@@ -720,6 +820,9 @@ function LevelBadge({ level, color }) {
         fontWeight: 700,
         letterSpacing: 0.5,
         marginBottom: 16,
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateX(0)" : "translateX(-18px)",
+        transition: "opacity 0.5s ease, transform 0.5s ease",
       }}
     >
       LEVEL {level}
@@ -727,9 +830,11 @@ function LevelBadge({ level, color }) {
   );
 }
 
-function StaircaseStep({ level, title, tools, description, color, active, onClick }) {
+function StaircaseStep({ level, title, tools, description, color, active, onClick, index = 0 }) {
+  const [ref, visible] = useInView(0.1);
   return (
     <div
+      ref={ref}
       onClick={onClick}
       role="button"
       tabIndex={0}
@@ -740,8 +845,10 @@ function StaircaseStep({ level, title, tools, description, color, active, onClic
         borderRadius: 12,
         border: active ? `2px solid ${color}` : `1px solid ${COLORS.lightGray}`,
         background: active ? `${color}10` : COLORS.white,
-        transition: "all 0.3s ease",
+        transition: `border 0.3s ease, background 0.3s ease, opacity 0.5s ease ${index * 120}ms, transform 0.5s ease ${index * 120}ms`,
         outline: "none",
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(18px)",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
@@ -830,14 +937,23 @@ function ReadingProgress() {
   );
 }
 
+const SECTION_IDS = ["catalyst", "level1", "level2", "level3", "staircase", "tools"];
+
 export default function App() {
   const [activeLevel, setActiveLevel] = useState(1);
   const [scrollY, setScrollY] = useState(0);
+  const [mounted, setMounted] = useState(false);
+  const activeSection = useActiveSection(SECTION_IDS);
 
   useEffect(() => {
     const h = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", h, { passive: true });
     return () => window.removeEventListener("scroll", h);
+  }, []);
+
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 80);
+    return () => clearTimeout(t);
   }, []);
 
   const wrap = {
@@ -855,7 +971,8 @@ export default function App() {
         background: COLORS.surfaceLight,
       }}
     >
-      <Nav scrollY={scrollY} />
+      <GlobalStyles />
+      <Nav scrollY={scrollY} activeSection={activeSection} />
       <ReadingProgress />
 
       {/* ─── HERO ─── */}
@@ -906,6 +1023,9 @@ export default function App() {
               color: COLORS.cyan,
               marginBottom: 24,
               textTransform: "uppercase",
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? "translateY(0)" : "translateY(20px)",
+              transition: "opacity 0.6s ease 100ms, transform 0.6s ease 100ms",
             }}
           >
             A personal perspective
@@ -916,6 +1036,9 @@ export default function App() {
               fontWeight: 800,
               lineHeight: 1.05,
               margin: "0 0 28px",
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? "translateY(0)" : "translateY(24px)",
+              transition: "opacity 0.6s ease 260ms, transform 0.6s ease 260ms",
             }}
           >
             The Builder<br />Mindset
@@ -927,12 +1050,24 @@ export default function App() {
               color: "rgba(255,255,255,0.85)",
               maxWidth: 600,
               margin: "0 0 36px",
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? "translateY(0)" : "translateY(20px)",
+              transition: "opacity 0.6s ease 420ms, transform 0.6s ease 420ms",
             }}
           >
             Experiment with AI. Build rapid prototypes. Develop new skills that keep
             us current — and differentiate how we deliver.
           </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 12,
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? "translateY(0)" : "translateY(16px)",
+              transition: "opacity 0.6s ease 560ms, transform 0.6s ease 560ms",
+            }}
+          >
             {["Experiment", "Prototype", "Differentiate"].map((w) => (
               <span
                 key={w}
@@ -961,6 +1096,8 @@ export default function App() {
               color: "rgba(255,255,255,0.4)",
               fontSize: 13,
               fontWeight: 500,
+              opacity: mounted ? 1 : 0,
+              transition: "opacity 0.6s ease 700ms",
             }}
           >
             <svg
@@ -1426,6 +1563,7 @@ export default function App() {
           </h2>
           <div style={{ display: "grid", gap: 12 }}>
             <StaircaseStep
+              index={0}
               level={1}
               title="Formulas"
               tools="ChatGPT + Sheets"
@@ -1435,6 +1573,7 @@ export default function App() {
               onClick={() => setActiveLevel(activeLevel === 1 ? null : 1)}
             />
             <StaircaseStep
+              index={1}
               level={2}
               title="Scripts"
               tools="Apps Script"
@@ -1444,6 +1583,7 @@ export default function App() {
               onClick={() => setActiveLevel(activeLevel === 2 ? null : 2)}
             />
             <StaircaseStep
+              index={2}
               level={3}
               title="Web Apps"
               tools="Claude Code + Google Sites"
@@ -1625,9 +1765,9 @@ export default function App() {
             An Investment of Curiosity
           </h2>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 32 }}>
-            <StatCard value="0" label="Lines of Code Written Manually" />
-            <StatCard value="0" label="Hours of Formal Technical Training" />
-            <StatCard value="$20" label="Total Financial Investment (Claude subscription)" />
+            <StatCard index={0} value="0" label="Lines of Code Written Manually" />
+            <StatCard index={1} value="0" label="Hours of Formal Technical Training" />
+            <StatCard index={2} value="$20" label="Total Financial Investment (Claude subscription)" />
           </div>
           <div
             style={{
@@ -1714,18 +1854,21 @@ export default function App() {
               </div>
               <div style={{ display: "grid", gap: 12 }}>
                 <ToolCard
+                  index={0}
                   name="Lovable"
                   url="https://lovable.dev"
                   tag="Free tier"
                   description="Describe an app in plain English, get a working prototype in minutes. The fastest way to see what's possible."
                 />
                 <ToolCard
+                  index={1}
                   name="Bolt.new"
                   url="https://bolt.new"
                   tag="Free tier"
                   description="Browser-based app builder by StackBlitz. Full-stack from a single prompt — frontend, backend, database."
                 />
                 <ToolCard
+                  index={2}
                   name="v0"
                   url="https://v0.dev"
                   tag="Free tier"
@@ -1761,12 +1904,14 @@ export default function App() {
               </div>
               <div style={{ display: "grid", gap: 12 }}>
                 <ToolCard
+                  index={0}
                   name="Google Apps Script + ChatGPT"
                   url="https://script.google.com"
                   tag="Free"
                   description="Describe what you want automated in your spreadsheet. Paste the generated script into Apps Script. Press a button."
                 />
                 <ToolCard
+                  index={1}
                   name="Replit"
                   url="https://replit.com"
                   tag="Free tier"
@@ -1802,12 +1947,14 @@ export default function App() {
               </div>
               <div style={{ display: "grid", gap: 12 }}>
                 <ToolCard
+                  index={0}
                   name="Claude Code"
                   url="https://docs.anthropic.com/en/docs/claude-code"
                   tag="~$20/mo"
                   description="Terminal-based AI that reads, writes, and refactors entire codebases. The power tool behind the tournament app."
                 />
                 <ToolCard
+                  index={1}
                   name="Cursor"
                   url="https://cursor.com"
                   tag="Free tier"
