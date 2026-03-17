@@ -1,0 +1,1884 @@
+import { useState, useEffect, useRef } from "react";
+
+const COLORS = {
+  slalomBlue: "#0C62FB",
+  slalomDark: "#002FAF",
+  cyan: "#1BE1F2",
+  coralRed: "#FF4D5F",
+  purple: "#C7B9FF",
+  chartreuse: "#DEF14D",
+  black: "#000000",
+  darkGray: "#666666",
+  lightGray: "#E8E8E8",
+  white: "#FFFFFF",
+};
+
+function useInView(threshold = 0.15) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setVisible(true);
+          obs.unobserve(el);
+        }
+      },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, visible];
+}
+
+function Section({ children, className = "", id }) {
+  const [ref, visible] = useInView(0.1);
+  return (
+    <section
+      id={id}
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(40px)",
+        transition: "opacity 0.7s ease, transform 0.7s ease",
+      }}
+    >
+      {children}
+    </section>
+  );
+}
+
+/* ── Sticky Nav ── */
+function Nav({ scrollY }) {
+  const [open, setOpen] = useState(false);
+  const links = [
+    { label: "Catalyst", href: "#catalyst" },
+    { label: "Level 1", href: "#level1" },
+    { label: "Level 2", href: "#level2" },
+    { label: "Level 3", href: "#level3" },
+    { label: "Staircase", href: "#staircase" },
+    { label: "Start Building", href: "#tools" },
+  ];
+  const solid = scrollY > 60;
+  return (
+    <nav
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        background: solid ? "rgba(0,47,175,0.97)" : "transparent",
+        backdropFilter: solid ? "blur(12px)" : "none",
+        borderBottom: solid ? "1px solid rgba(255,255,255,0.1)" : "none",
+        transition: "background 0.3s, border 0.3s",
+        padding: "0 24px",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 900,
+          margin: "0 auto",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          height: 56,
+        }}
+      >
+        <a
+          href="#top"
+          style={{
+            color: COLORS.white,
+            fontWeight: 800,
+            fontSize: 15,
+            textDecoration: "none",
+            letterSpacing: 0.3,
+          }}
+        >
+          Builder Mindset
+        </a>
+
+        {/* Desktop links */}
+        <div
+          style={{
+            display: "flex",
+            gap: 4,
+          }}
+          className="nav-links"
+        >
+          {links.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              style={{
+                color: "rgba(255,255,255,0.8)",
+                fontSize: 13,
+                fontWeight: 600,
+                textDecoration: "none",
+                padding: "6px 10px",
+                borderRadius: 6,
+                transition: "color 0.2s, background 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = COLORS.white;
+                e.currentTarget.style.background = "rgba(255,255,255,0.1)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "rgba(255,255,255,0.8)";
+                e.currentTarget.style.background = "transparent";
+              }}
+            >
+              {l.label}
+            </a>
+          ))}
+        </div>
+
+        {/* Hamburger */}
+        <button
+          onClick={() => setOpen((v) => !v)}
+          style={{
+            display: "none",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 6,
+            color: COLORS.white,
+          }}
+          className="hamburger"
+          aria-label="Toggle menu"
+        >
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor">
+            {open ? (
+              <path d="M4 4l14 14M18 4L4 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" />
+            ) : (
+              <>
+                <rect y="4" width="22" height="2" rx="1" />
+                <rect y="10" width="22" height="2" rx="1" />
+                <rect y="16" width="22" height="2" rx="1" />
+              </>
+            )}
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile menu */}
+      {open && (
+        <div
+          style={{
+            background: "rgba(0,47,175,0.98)",
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            padding: "12px 24px 20px",
+          }}
+          className="mobile-menu"
+        >
+          {links.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              onClick={() => setOpen(false)}
+              style={{
+                display: "block",
+                color: "rgba(255,255,255,0.85)",
+                fontSize: 15,
+                fontWeight: 600,
+                textDecoration: "none",
+                padding: "10px 0",
+                borderBottom: "1px solid rgba(255,255,255,0.07)",
+              }}
+            >
+              {l.label}
+            </a>
+          ))}
+        </div>
+      )}
+
+      <style>{`
+        @media (max-width: 640px) {
+          .nav-links { display: none !important; }
+          .hamburger { display: block !important; }
+        }
+      `}</style>
+    </nav>
+  );
+}
+
+/* ── Visual: Spreadsheet mock ── */
+function SheetMockup() {
+  const rows = [
+    { name: "Alex", avail: "✓", team: "1", color: "#E8F5E9" },
+    { name: "Jamie", avail: "✓", team: "1", color: "#E8F5E9" },
+    { name: "Sam", avail: "✓", team: "2", color: "#E3F2FD" },
+    { name: "Riley", avail: "✗", team: "—", color: "#FFF8E1" },
+    { name: "Morgan", avail: "✓", team: "2", color: "#E3F2FD" },
+    { name: "Casey", avail: "✓", team: "3", color: "#FCE4EC" },
+  ];
+  return (
+    <div
+      style={{
+        background: COLORS.white,
+        borderRadius: 12,
+        border: `1px solid ${COLORS.lightGray}`,
+        overflow: "hidden",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+      }}
+    >
+      {/* Sheet chrome */}
+      <div
+        style={{
+          background: "#f1f3f4",
+          padding: "10px 16px",
+          borderBottom: `1px solid ${COLORS.lightGray}`,
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+        }}
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#34A853">
+          <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z" />
+        </svg>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "#3c4043" }}>
+          U7s Availability Tracker.xlsx
+        </span>
+        <span
+          style={{
+            marginLeft: "auto",
+            fontSize: 11,
+            background: "#E8F0FE",
+            color: COLORS.slalomBlue,
+            padding: "2px 8px",
+            borderRadius: 4,
+            fontWeight: 600,
+          }}
+        >
+          Auto-assigned
+        </span>
+      </div>
+
+      {/* Header row */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 80px 80px",
+          background: "#f8f9fa",
+          padding: "8px 16px",
+          borderBottom: `1px solid ${COLORS.lightGray}`,
+        }}
+      >
+        {["Player", "Available", "Team"].map((h) => (
+          <div
+            key={h}
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              color: COLORS.darkGray,
+              textTransform: "uppercase",
+              letterSpacing: 0.5,
+            }}
+          >
+            {h}
+          </div>
+        ))}
+      </div>
+
+      {/* Data rows */}
+      {rows.map((r) => (
+        <div
+          key={r.name}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 80px 80px",
+            padding: "9px 16px",
+            borderBottom: `1px solid #f0f0f0`,
+            background: r.avail === "✗" ? "#fafafa" : COLORS.white,
+          }}
+        >
+          <span style={{ fontSize: 14, color: COLORS.black, fontWeight: 500 }}>{r.name}</span>
+          <span
+            style={{
+              fontSize: 14,
+              fontWeight: 700,
+              color: r.avail === "✓" ? "#2E7D32" : COLORS.darkGray,
+            }}
+          >
+            {r.avail}
+          </span>
+          <span
+            style={{
+              fontSize: 13,
+              fontWeight: 700,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 28,
+              height: 28,
+              borderRadius: 6,
+              background: r.avail === "✗" ? "transparent" : r.color,
+              color: r.avail === "✗" ? COLORS.darkGray : COLORS.black,
+            }}
+          >
+            {r.team}
+          </span>
+        </div>
+      ))}
+
+      <div
+        style={{
+          padding: "10px 16px",
+          background: "#f8f9fa",
+          fontSize: 12,
+          color: COLORS.darkGray,
+          fontStyle: "italic",
+        }}
+      >
+        =IF(C2="","—",VLOOKUP(C2,TeamTable,2,0)) — generated by ChatGPT
+      </div>
+    </div>
+  );
+}
+
+/* ── Visual: Script buttons mock ── */
+function ScriptMockup() {
+  const [active, setActive] = useState(null);
+
+  const buttons = [
+    { label: "📋 Generate Fixtures", color: COLORS.slalomBlue },
+    { label: "📱 Send WhatsApp Blast", color: "#25D366" },
+    { label: "💳 Reconcile RFU Payments", color: COLORS.coralRed },
+  ];
+
+  return (
+    <div
+      style={{
+        background: COLORS.white,
+        borderRadius: 12,
+        border: `1px solid ${COLORS.lightGray}`,
+        overflow: "hidden",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+      }}
+    >
+      <div
+        style={{
+          background: "#f1f3f4",
+          padding: "10px 16px",
+          borderBottom: `1px solid ${COLORS.lightGray}`,
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+        }}
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#34A853">
+          <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z" />
+        </svg>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "#3c4043" }}>
+          U7s Admin Hub — One-Click Automations
+        </span>
+      </div>
+
+      <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12 }}>
+        {buttons.map((b) => (
+          <button
+            key={b.label}
+            onClick={() => setActive(b.label)}
+            style={{
+              background: active === b.label ? b.color : COLORS.white,
+              color: active === b.label ? COLORS.white : b.color,
+              border: `2px solid ${b.color}`,
+              borderRadius: 8,
+              padding: "12px 20px",
+              fontSize: 14,
+              fontWeight: 700,
+              cursor: "pointer",
+              transition: "all 0.2s",
+              textAlign: "left",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            {b.label}
+            {active === b.label && (
+              <span style={{ fontSize: 12, opacity: 0.85 }}>✓ Done</span>
+            )}
+          </button>
+        ))}
+        <div
+          style={{
+            marginTop: 4,
+            padding: "10px 14px",
+            background: "#f8f9fa",
+            borderRadius: 8,
+            fontSize: 12,
+            color: COLORS.darkGray,
+            fontFamily: "monospace",
+          }}
+        >
+          {active
+            ? `> Running "${active}"... ✓ Complete`
+            : "> Click a button to run a script"}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Visual: Tournament fixture app mock ── */
+function TournamentMockup() {
+  const teams = ["North Stars", "South Bears", "East Eagles", "West Wolves", "City Lions"];
+  const fixtures = [
+    { home: "North Stars", away: "East Eagles", pitch: "A", time: "09:00" },
+    { home: "South Bears", away: "West Wolves", pitch: "B", time: "09:20" },
+    { home: "City Lions", away: "North Stars", pitch: "A", time: "09:40" },
+    { home: "East Eagles", away: "South Bears", pitch: "B", time: "10:00" },
+    { home: "West Wolves", away: "City Lions", pitch: "C", time: "10:20" },
+  ];
+  const pitchColors = { A: "#EBF2FF", B: "#E8F5E9", C: "#FFF8E1" };
+
+  return (
+    <div
+      style={{
+        background: COLORS.white,
+        borderRadius: 12,
+        border: `1px solid ${COLORS.lightGray}`,
+        overflow: "hidden",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+      }}
+    >
+      {/* App chrome */}
+      <div
+        style={{
+          background: COLORS.slalomDark,
+          padding: "14px 20px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div>
+          <div style={{ fontSize: 15, fontWeight: 800, color: COLORS.white }}>
+            Cheshire Minis 2024
+          </div>
+          <div style={{ fontSize: 11, color: COLORS.cyan, fontWeight: 600 }}>
+            60 teams · 3 pitches · Auto-scheduled
+          </div>
+        </div>
+        <div
+          style={{
+            background: COLORS.cyan,
+            color: COLORS.slalomDark,
+            padding: "4px 12px",
+            borderRadius: 99,
+            fontSize: 12,
+            fontWeight: 800,
+          }}
+        >
+          LIVE
+        </div>
+      </div>
+
+      {/* Constraints bar */}
+      <div
+        style={{
+          background: "#f8f9fa",
+          padding: "10px 20px",
+          borderBottom: `1px solid ${COLORS.lightGray}`,
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 8,
+        }}
+      >
+        {["No club clashes", "Lunch 12:30–13:15", "Min 4 matches", "Dynamic drop-outs"].map(
+          (c) => (
+            <span
+              key={c}
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                padding: "3px 10px",
+                borderRadius: 99,
+                background: "#EBF2FF",
+                color: COLORS.slalomBlue,
+              }}
+            >
+              ✓ {c}
+            </span>
+          )
+        )}
+      </div>
+
+      {/* Fixture list */}
+      <div style={{ padding: "12px 0" }}>
+        {fixtures.map((f, i) => (
+          <div
+            key={i}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "52px 1fr auto 1fr 36px",
+              alignItems: "center",
+              gap: 8,
+              padding: "8px 20px",
+              borderBottom: "1px solid #f0f0f0",
+            }}
+          >
+            <span
+              style={{
+                fontSize: 12,
+                fontWeight: 700,
+                color: COLORS.darkGray,
+                fontFamily: "monospace",
+              }}
+            >
+              {f.time}
+            </span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.black, textAlign: "right" }}>
+              {f.home}
+            </span>
+            <span
+              style={{
+                fontSize: 12,
+                fontWeight: 800,
+                color: COLORS.darkGray,
+                textAlign: "center",
+              }}
+            >
+              vs
+            </span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.black }}>
+              {f.away}
+            </span>
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 800,
+                textAlign: "center",
+                padding: "4px 6px",
+                borderRadius: 6,
+                background: pitchColors[f.pitch],
+                color: COLORS.black,
+              }}
+            >
+              {f.pitch}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div
+        style={{
+          padding: "10px 20px",
+          background: "#f8f9fa",
+          fontSize: 12,
+          color: COLORS.darkGray,
+          fontStyle: "italic",
+          borderTop: `1px solid ${COLORS.lightGray}`,
+        }}
+      >
+        Built with Claude Code in &lt;1 hour · Constraint-satisfaction algorithm
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ value, label }) {
+  return (
+    <div
+      style={{
+        background: COLORS.white,
+        borderRadius: 12,
+        padding: "32px 24px",
+        textAlign: "center",
+        border: `1px solid ${COLORS.lightGray}`,
+        flex: "1 1 200px",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+      }}
+    >
+      <div
+        style={{
+          fontSize: 56,
+          fontWeight: 800,
+          color: COLORS.slalomBlue,
+          lineHeight: 1,
+        }}
+      >
+        {value}
+      </div>
+      <div style={{ fontSize: 14, color: COLORS.darkGray, marginTop: 12, fontWeight: 500 }}>
+        {label}
+      </div>
+    </div>
+  );
+}
+
+function ToolCard({ name, url, description, tag }) {
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        display: "block",
+        background: COLORS.white,
+        borderRadius: 12,
+        padding: "20px 24px",
+        border: `1px solid ${COLORS.lightGray}`,
+        textDecoration: "none",
+        transition: "border-color 0.2s, box-shadow 0.2s, transform 0.2s",
+        cursor: "pointer",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = COLORS.slalomBlue;
+        e.currentTarget.style.boxShadow = "0 4px 20px rgba(12,98,251,0.1)";
+        e.currentTarget.style.transform = "translateY(-2px)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = COLORS.lightGray;
+        e.currentTarget.style.boxShadow = "none";
+        e.currentTarget.style.transform = "translateY(0)";
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+        <span style={{ fontWeight: 700, fontSize: 16, color: COLORS.black }}>{name}</span>
+        <span
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            padding: "2px 8px",
+            borderRadius: 99,
+            background:
+              tag === "Free"
+                ? "#E8F5E9"
+                : tag === "Free tier"
+                ? "#E3F2FD"
+                : "#FFF8E1",
+            color:
+              tag === "Free"
+                ? "#2E7D32"
+                : tag === "Free tier"
+                ? "#1565C0"
+                : "#F57F17",
+          }}
+        >
+          {tag}
+        </span>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke={COLORS.darkGray}
+          strokeWidth="2"
+          style={{ marginLeft: "auto", flexShrink: 0 }}
+        >
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+          <polyline points="15 3 21 3 21 9" />
+          <line x1="10" y1="14" x2="21" y2="3" />
+        </svg>
+      </div>
+      <div style={{ fontSize: 14, color: COLORS.darkGray, lineHeight: 1.5 }}>
+        {description}
+      </div>
+    </a>
+  );
+}
+
+function LevelBadge({ level, color }) {
+  return (
+    <div
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        background: color,
+        color: COLORS.white,
+        padding: "6px 16px",
+        borderRadius: 99,
+        fontSize: 13,
+        fontWeight: 700,
+        letterSpacing: 0.5,
+        marginBottom: 16,
+      }}
+    >
+      LEVEL {level}
+    </div>
+  );
+}
+
+function StaircaseStep({ level, title, tools, description, color, active, onClick }) {
+  return (
+    <div
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && onClick()}
+      style={{
+        cursor: "pointer",
+        padding: "20px 24px",
+        borderRadius: 12,
+        border: active ? `2px solid ${color}` : `1px solid ${COLORS.lightGray}`,
+        background: active ? `${color}10` : COLORS.white,
+        transition: "all 0.3s ease",
+        outline: "none",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+        <div
+          style={{
+            width: 28,
+            height: 28,
+            borderRadius: 99,
+            background: color,
+            color: COLORS.white,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 14,
+            fontWeight: 800,
+            flexShrink: 0,
+          }}
+        >
+          {level}
+        </div>
+        <span style={{ fontWeight: 700, fontSize: 18, color: COLORS.black }}>{title}</span>
+        <span
+          style={{
+            marginLeft: "auto",
+            fontSize: 12,
+            color: active ? color : COLORS.darkGray,
+            transition: "color 0.3s",
+          }}
+        >
+          {active ? "▲" : "▼"}
+        </span>
+      </div>
+      <div style={{ fontSize: 13, color: COLORS.slalomBlue, fontWeight: 600, marginBottom: 4 }}>
+        {tools}
+      </div>
+      <div
+        style={{
+          maxHeight: active ? 200 : 0,
+          overflow: "hidden",
+          transition: "max-height 0.4s ease",
+        }}
+      >
+        <div style={{ fontSize: 14, color: COLORS.darkGray, lineHeight: 1.6, marginTop: 8 }}>
+          {description}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Progress bar ── */
+function ReadingProgress() {
+  const [pct, setPct] = useState(0);
+  useEffect(() => {
+    const h = () => {
+      const el = document.documentElement;
+      const progress =
+        (el.scrollTop || document.body.scrollTop) /
+        ((el.scrollHeight || document.body.scrollHeight) - el.clientHeight);
+      setPct(Math.min(progress * 100, 100));
+    };
+    window.addEventListener("scroll", h, { passive: true });
+    return () => window.removeEventListener("scroll", h);
+  }, []);
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 56,
+        left: 0,
+        right: 0,
+        height: 3,
+        zIndex: 99,
+        background: "rgba(255,255,255,0.15)",
+      }}
+    >
+      <div
+        style={{
+          height: "100%",
+          width: `${pct}%`,
+          background: COLORS.cyan,
+          transition: "width 0.1s linear",
+        }}
+      />
+    </div>
+  );
+}
+
+export default function App() {
+  const [activeLevel, setActiveLevel] = useState(1);
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const h = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", h, { passive: true });
+    return () => window.removeEventListener("scroll", h);
+  }, []);
+
+  const wrap = {
+    maxWidth: 900,
+    margin: "0 auto",
+    padding: "0 24px",
+  };
+
+  return (
+    <div
+      id="top"
+      style={{
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        color: COLORS.black,
+        background: "#FAFAFA",
+      }}
+    >
+      <Nav scrollY={scrollY} />
+      <ReadingProgress />
+
+      {/* ─── HERO ─── */}
+      <div
+        style={{
+          background: COLORS.slalomDark,
+          color: COLORS.white,
+          padding: "140px 24px 100px",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* Decorative blobs */}
+        <div
+          style={{
+            position: "absolute",
+            top: -100,
+            right: -100,
+            width: 500,
+            height: 500,
+            borderRadius: "50%",
+            background: COLORS.slalomBlue,
+            opacity: 0.2,
+            transform: `translateY(${scrollY * 0.1}px)`,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: -60,
+            left: -60,
+            width: 300,
+            height: 300,
+            borderRadius: "50%",
+            background: COLORS.cyan,
+            opacity: 0.1,
+            transform: `translateY(${scrollY * -0.05}px)`,
+          }}
+        />
+        <div
+          style={{ ...wrap, position: "relative", zIndex: 1 }}
+        >
+          <div
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: 2,
+              color: COLORS.cyan,
+              marginBottom: 24,
+              textTransform: "uppercase",
+            }}
+          >
+            A personal perspective
+          </div>
+          <h1
+            style={{
+              fontSize: "clamp(40px, 7vw, 72px)",
+              fontWeight: 800,
+              lineHeight: 1.05,
+              margin: "0 0 28px",
+            }}
+          >
+            The Builder<br />Mindset
+          </h1>
+          <p
+            style={{
+              fontSize: "clamp(17px, 2.5vw, 21px)",
+              lineHeight: 1.65,
+              color: "rgba(255,255,255,0.85)",
+              maxWidth: 600,
+              margin: "0 0 36px",
+            }}
+          >
+            Experiment with AI. Build rapid prototypes. Develop new skills that keep
+            us current — and differentiate how we deliver.
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+            {["Experiment", "Prototype", "Differentiate"].map((w) => (
+              <span
+                key={w}
+                style={{
+                  padding: "8px 20px",
+                  borderRadius: 99,
+                  border: "1px solid rgba(255,255,255,0.3)",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: COLORS.white,
+                  backdropFilter: "blur(4px)",
+                }}
+              >
+                {w}
+              </span>
+            ))}
+          </div>
+
+          {/* Scroll cue */}
+          <div
+            style={{
+              marginTop: 56,
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              color: "rgba(255,255,255,0.4)",
+              fontSize: 13,
+              fontWeight: 500,
+            }}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              style={{ animation: "bounce 2s infinite" }}
+            >
+              <path d="M12 5v14M5 12l7 7 7-7" />
+            </svg>
+            Scroll to explore
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(6px); }
+        }
+      `}</style>
+
+      {/* ─── CATALYST ─── */}
+      <Section id="catalyst">
+        <div style={{ ...wrap, padding: "80px 24px" }}>
+          <div
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: 2,
+              color: COLORS.slalomBlue,
+              marginBottom: 12,
+              textTransform: "uppercase",
+            }}
+          >
+            The Catalyst
+          </div>
+          <h2
+            style={{
+              fontSize: "clamp(28px, 4vw, 40px)",
+              fontWeight: 800,
+              margin: "0 0 16px",
+              lineHeight: 1.2,
+            }}
+          >
+            Under-7s Rugby Chaos
+          </h2>
+          <p
+            style={{
+              fontSize: 17,
+              color: COLORS.darkGray,
+              lineHeight: 1.7,
+              maxWidth: 650,
+              marginBottom: 40,
+            }}
+          >
+            Volunteering as U7s Team Manager seemed simple — count the hotdogs for
+            post-match meals. The reality was a torrent of admin: reconciling RFU
+            registrations, tracking weekly availability, coordinating fixtures, and
+            broadcasting updates to parents.
+          </p>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+              gap: 20,
+              marginBottom: 40,
+            }}
+          >
+            <div
+              style={{
+                background: COLORS.white,
+                borderRadius: 12,
+                padding: 24,
+                border: `1px solid ${COLORS.lightGray}`,
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: COLORS.coralRed,
+                  marginBottom: 8,
+                  textTransform: "uppercase",
+                  letterSpacing: 1,
+                }}
+              >
+                The Expectation
+              </div>
+              <p style={{ fontSize: 15, color: COLORS.darkGray, lineHeight: 1.6, margin: 0 }}>
+                Count hotdogs. Confirm Sunday numbers. Easy.
+              </p>
+            </div>
+            <div
+              style={{
+                background: COLORS.white,
+                borderRadius: 12,
+                padding: 24,
+                border: `1px solid ${COLORS.lightGray}`,
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: COLORS.slalomBlue,
+                  marginBottom: 8,
+                  textTransform: "uppercase",
+                  letterSpacing: 1,
+                }}
+              >
+                The Reality
+              </div>
+              <p style={{ fontSize: 15, color: COLORS.darkGray, lineHeight: 1.6, margin: 0 }}>
+                RFU reconciliation, availability tracking, fixture generation, WhatsApp
+                broadcasts, payment chasing...
+              </p>
+            </div>
+          </div>
+          <div
+            style={{
+              background: `linear-gradient(135deg, ${COLORS.slalomDark} 0%, ${COLORS.slalomBlue} 100%)`,
+              borderRadius: 12,
+              padding: 24,
+              color: COLORS.white,
+            }}
+          >
+            <p style={{ fontSize: 16, fontWeight: 600, margin: 0, lineHeight: 1.6 }}>
+              💡 How can technology solve a weekend headache — without requiring a
+              software degree?
+            </p>
+          </div>
+        </div>
+      </Section>
+
+      {/* ─── LEVEL 1 ─── */}
+      <Section id="level1">
+        <div style={{ background: COLORS.white }}>
+          <div style={{ ...wrap, padding: "60px 24px 80px" }}>
+            <LevelBadge level={1} color={COLORS.darkGray} />
+            <h2
+              style={{
+                fontSize: "clamp(28px, 4vw, 40px)",
+                fontWeight: 800,
+                margin: "0 0 8px",
+                lineHeight: 1.2,
+              }}
+            >
+              Formulas
+            </h2>
+            <p
+              style={{
+                fontSize: 14,
+                color: COLORS.slalomBlue,
+                fontWeight: 600,
+                marginBottom: 16,
+              }}
+            >
+              ChatGPT + Google Sheets
+            </p>
+            <p
+              style={{
+                fontSize: 17,
+                color: COLORS.darkGray,
+                lineHeight: 1.7,
+                maxWidth: 650,
+                marginBottom: 32,
+              }}
+            >
+              Parents submit availability via Google Forms. The data flows into a
+              spreadsheet — but allocating players to teams needed complex formulas.
+              Plain English descriptions of tab names, field names, and desired outcomes
+              went into ChatGPT. Working formulas came back.
+            </p>
+
+            <div
+              style={{
+                margin: "32px 0",
+                padding: "20px 24px",
+                borderLeft: `4px solid ${COLORS.slalomBlue}`,
+                background: "#EBF2FF",
+                borderRadius: "0 12px 12px 0",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: COLORS.slalomBlue,
+                  textTransform: "uppercase",
+                  letterSpacing: 1.5,
+                  marginBottom: 6,
+                }}
+              >
+                The Result
+              </div>
+              <p
+                style={{
+                  fontSize: 17,
+                  color: COLORS.slalomDark,
+                  lineHeight: 1.6,
+                  margin: 0,
+                  fontWeight: 500,
+                }}
+              >
+                All the coach has to do is add a number next to the name of each player
+                and it assigns them to the corresponding team in the table to the right.
+              </p>
+            </div>
+
+            <SheetMockup />
+
+            <div
+              style={{
+                marginTop: 24,
+                padding: 20,
+                background: "#f8f9fa",
+                borderRadius: 12,
+                border: `1px solid ${COLORS.lightGray}`,
+              }}
+            >
+              <p style={{ fontSize: 14, color: COLORS.darkGray, margin: 0, lineHeight: 1.6 }}>
+                <strong style={{ color: COLORS.black }}>Key insight:</strong> The
+                technical barrier is gone. If you can articulate the logic, the AI
+                writes the syntax.
+              </p>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* ─── LEVEL 2 ─── */}
+      <Section id="level2">
+        <div style={{ ...wrap, padding: "60px 24px 80px" }}>
+          <LevelBadge level={2} color={COLORS.slalomBlue} />
+          <h2
+            style={{
+              fontSize: "clamp(28px, 4vw, 40px)",
+              fontWeight: 800,
+              margin: "0 0 8px",
+              lineHeight: 1.2,
+            }}
+          >
+            Scripts
+          </h2>
+          <p
+            style={{
+              fontSize: 14,
+              color: COLORS.slalomBlue,
+              fontWeight: 600,
+              marginBottom: 16,
+            }}
+          >
+            ChatGPT + Google Apps Script
+          </p>
+          <p
+            style={{
+              fontSize: 17,
+              color: COLORS.darkGray,
+              lineHeight: 1.7,
+              maxWidth: 650,
+              marginBottom: 32,
+            }}
+          >
+            Formulas weren't enough. Fixture generation, WhatsApp announcements, and
+            RFU payment reconciliation each needed automation. ChatGPT produced Apps
+            Scripts that ran from one-click buttons inside the spreadsheet.
+          </p>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+              gap: 16,
+              marginBottom: 32,
+            }}
+          >
+            {[
+              {
+                from: "Parent WhatsApp messages",
+                via: "Google Forms",
+                to: "Clean Availability",
+              },
+              {
+                from: "Mismatched RFU Export",
+                via: "Reconciliation Script",
+                to: "Paid / Unpaid Roster",
+              },
+              {
+                from: "Manual Match Updates",
+                via: "Broadcast Script",
+                to: "WhatsApp Announcements",
+              },
+            ].map((p, i) => (
+              <div
+                key={i}
+                style={{
+                  background: COLORS.white,
+                  borderRadius: 12,
+                  padding: 20,
+                  border: `1px solid ${COLORS.lightGray}`,
+                }}
+              >
+                <div style={{ fontSize: 12, color: COLORS.darkGray, marginBottom: 6 }}>
+                  {p.from}
+                </div>
+                <div
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: COLORS.slalomBlue,
+                    margin: "8px 0",
+                  }}
+                >
+                  → {p.via}
+                </div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.black }}>
+                  {p.to}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <ScriptMockup />
+
+          <div
+            style={{
+              marginTop: 24,
+              padding: 20,
+              background: COLORS.white,
+              borderRadius: 12,
+              border: `1px solid ${COLORS.lightGray}`,
+            }}
+          >
+            <p style={{ fontSize: 14, color: COLORS.darkGray, margin: 0, lineHeight: 1.6 }}>
+              <strong style={{ color: COLORS.black }}>Key takeaway:</strong> Every
+              manual admin task is a structured logic puzzle waiting to be automated.
+            </p>
+          </div>
+        </div>
+      </Section>
+
+      {/* ─── LEVEL 3 ─── */}
+      <Section id="level3">
+        <div style={{ background: COLORS.white }}>
+          <div style={{ ...wrap, padding: "60px 24px 80px" }}>
+            <LevelBadge level={3} color={COLORS.coralRed} />
+            <h2
+              style={{
+                fontSize: "clamp(28px, 4vw, 40px)",
+                fontWeight: 800,
+                margin: "0 0 8px",
+                lineHeight: 1.2,
+              }}
+            >
+              The Crucible
+            </h2>
+            <p
+              style={{
+                fontSize: 14,
+                color: COLORS.slalomBlue,
+                fontWeight: 600,
+                marginBottom: 16,
+              }}
+            >
+              Claude Code — 60 Teams, 1 App
+            </p>
+            <p
+              style={{
+                fontSize: 17,
+                color: COLORS.darkGray,
+                lineHeight: 1.7,
+                maxWidth: 650,
+                marginBottom: 32,
+              }}
+            >
+              The annual Cheshire Minis tournament: 60–70 teams, dynamic day-of
+              changes, competing constraints around pitches, lunch breaks, and the
+              golden rule — no internal club matches. Within one hour, Claude Code
+              produced a working prototype that handled it all.
+            </p>
+
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 10,
+                marginBottom: 32,
+              }}
+            >
+              {[
+                "Minimum Matches",
+                "Pitch Availability",
+                "Lunch Breaks",
+                "Dynamic Drop-outs",
+                "No Internal Matches",
+              ].map((c) => (
+                <span
+                  key={c}
+                  style={{
+                    padding: "6px 14px",
+                    borderRadius: 99,
+                    fontSize: 13,
+                    fontWeight: 600,
+                    background: "#FFEEF0",
+                    color: COLORS.coralRed,
+                  }}
+                >
+                  {c}
+                </span>
+              ))}
+            </div>
+
+            <TournamentMockup />
+
+            <div
+              style={{
+                marginTop: 24,
+                padding: 20,
+                background: "#f8f9fa",
+                borderRadius: 12,
+                border: `1px solid ${COLORS.lightGray}`,
+              }}
+            >
+              <p style={{ fontSize: 14, color: COLORS.darkGray, margin: 0, lineHeight: 1.6 }}>
+                <strong style={{ color: COLORS.black }}>Key takeaway:</strong> Prototyping
+                complex logic is no longer measured in weeks, but in hours.
+              </p>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* ─── CAPABILITY STAIRCASE ─── */}
+      <Section id="staircase">
+        <div style={{ ...wrap, padding: "80px 24px" }}>
+          <div
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: 2,
+              color: COLORS.slalomBlue,
+              marginBottom: 12,
+              textTransform: "uppercase",
+            }}
+          >
+            The Capability Staircase
+          </div>
+          <h2
+            style={{
+              fontSize: "clamp(28px, 4vw, 40px)",
+              fontWeight: 800,
+              margin: "0 0 32px",
+              lineHeight: 1.2,
+            }}
+          >
+            Zero technical skill required.
+            <br />
+            At every level.
+          </h2>
+          <div style={{ display: "grid", gap: 12 }}>
+            <StaircaseStep
+              level={1}
+              title="Formulas"
+              tools="ChatGPT + Sheets"
+              color={COLORS.darkGray}
+              description="Use plain English to write complex Google Sheet formulas for data organisation and team allocation."
+              active={activeLevel === 1}
+              onClick={() => setActiveLevel(activeLevel === 1 ? null : 1)}
+            />
+            <StaircaseStep
+              level={2}
+              title="Scripts"
+              tools="Apps Script"
+              color={COLORS.slalomBlue}
+              description="Generate custom scripts to automate tasks — send messages, reconcile databases — via one-click buttons."
+              active={activeLevel === 2}
+              onClick={() => setActiveLevel(activeLevel === 2 ? null : 2)}
+            />
+            <StaircaseStep
+              level={3}
+              title="Web Apps"
+              tools="Claude Code + Google Sites"
+              color={COLORS.coralRed}
+              description="Deploy Claude Code to process dynamic constraints and build functional web interfaces. Chain simple tools into an MVP architecture."
+              active={activeLevel === 3}
+              onClick={() => setActiveLevel(activeLevel === 3 ? null : 3)}
+            />
+          </div>
+          <div
+            style={{
+              marginTop: 24,
+              padding: 20,
+              background: COLORS.white,
+              borderRadius: 12,
+              border: `1px solid ${COLORS.lightGray}`,
+            }}
+          >
+            <p style={{ fontSize: 14, color: COLORS.darkGray, margin: 0, lineHeight: 1.6 }}>
+              <strong style={{ color: COLORS.black }}>The limiting factor</strong> is no
+              longer technical skill — it's imagination and logical definition.
+            </p>
+          </div>
+        </div>
+      </Section>
+
+      {/* ─── THE PIVOT ─── */}
+      <Section>
+        <div style={{ background: COLORS.white }}>
+          <div style={{ ...wrap, padding: "80px 24px" }}>
+            <div
+              style={{
+                fontSize: 13,
+                fontWeight: 600,
+                letterSpacing: 2,
+                color: COLORS.slalomBlue,
+                marginBottom: 12,
+                textTransform: "uppercase",
+              }}
+            >
+              The Pivot
+            </div>
+            <h2
+              style={{
+                fontSize: "clamp(28px, 4vw, 40px)",
+                fontWeight: 800,
+                margin: "0 0 16px",
+                lineHeight: 1.2,
+              }}
+            >
+              The Death of the Static Pitch
+            </h2>
+            <p
+              style={{
+                fontSize: 17,
+                color: COLORS.darkGray,
+                lineHeight: 1.7,
+                maxWidth: 650,
+                marginBottom: 40,
+              }}
+            >
+              The exact same process used for the Cheshire Minis is now being deployed
+              for client work. Why arrive with a static slide deck explaining a
+              theoretical solution, when you can arrive with a bespoke, working
+              prototype — built in the same amount of time?
+            </p>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: 20,
+                marginBottom: 40,
+              }}
+            >
+              <div
+                style={{
+                  background: "#f8f9fa",
+                  borderRadius: 12,
+                  padding: 28,
+                  border: `1px solid ${COLORS.lightGray}`,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: COLORS.darkGray,
+                    marginBottom: 12,
+                    textTransform: "uppercase",
+                    letterSpacing: 1,
+                  }}
+                >
+                  Delivery & Strategy
+                </div>
+                <div style={{ fontSize: 15, color: COLORS.darkGray, lineHeight: 1.6 }}>
+                  <strong style={{ color: COLORS.black }}>Focus:</strong> MVP & Vision
+                  Alignment
+                  <br />
+                  <strong style={{ color: COLORS.black }}>Toolset:</strong> AI Generators
+                  & Accessible UI
+                  <br />
+                  <strong style={{ color: COLORS.black }}>Outcome:</strong> Client Buy-in
+                  & Tangible Proof
+                </div>
+              </div>
+              <div
+                style={{
+                  background: "#f8f9fa",
+                  borderRadius: 12,
+                  padding: 28,
+                  border: `1px solid ${COLORS.lightGray}`,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: COLORS.darkGray,
+                    marginBottom: 12,
+                    textTransform: "uppercase",
+                    letterSpacing: 1,
+                  }}
+                >
+                  Build & Engineering
+                </div>
+                <div style={{ fontSize: 15, color: COLORS.darkGray, lineHeight: 1.6 }}>
+                  <strong style={{ color: COLORS.black }}>Focus:</strong> Security, Scale
+                  & Robustness
+                  <br />
+                  <strong style={{ color: COLORS.black }}>Toolset:</strong> Deep Technical
+                  Architecture
+                  <br />
+                  <strong style={{ color: COLORS.black }}>Outcome:</strong>{" "}
+                  Production-Ready Software
+                </div>
+              </div>
+            </div>
+            <div
+              style={{
+                padding: 24,
+                borderRadius: 12,
+                background: `linear-gradient(135deg, ${COLORS.slalomDark} 0%, ${COLORS.slalomBlue} 100%)`,
+                color: COLORS.white,
+              }}
+            >
+              <p style={{ fontSize: 15, margin: 0, lineHeight: 1.6 }}>
+                This isn't about replacing the build function. It's about engaging client
+                imagination so our build colleagues have a validated target.{" "}
+                <strong>Prototyping is our new core differentiator.</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* ─── THE INVESTMENT ─── */}
+      <Section>
+        <div style={{ ...wrap, padding: "80px 24px" }}>
+          <div
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: 2,
+              color: COLORS.slalomBlue,
+              marginBottom: 12,
+              textTransform: "uppercase",
+            }}
+          >
+            The Investment
+          </div>
+          <h2
+            style={{
+              fontSize: "clamp(28px, 4vw, 40px)",
+              fontWeight: 800,
+              margin: "0 0 32px",
+              lineHeight: 1.2,
+            }}
+          >
+            An Investment of Curiosity
+          </h2>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 32 }}>
+            <StatCard value="0" label="Lines of Code Written Manually" />
+            <StatCard value="0" label="Hours of Formal Technical Training" />
+            <StatCard value="$20" label="Total Financial Investment (Claude subscription)" />
+          </div>
+          <div
+            style={{
+              padding: 20,
+              background: COLORS.white,
+              borderRadius: 12,
+              border: `1px solid ${COLORS.lightGray}`,
+            }}
+          >
+            <p style={{ fontSize: 14, color: COLORS.darkGray, margin: 0, lineHeight: 1.6 }}>
+              The only requirement to build custom, dynamic tooling is curiosity. The
+              hard work is done — prototypes can now be rinsed and repeated for future
+              engagements.
+            </p>
+          </div>
+        </div>
+      </Section>
+
+      {/* ─── WHERE TO START ─── */}
+      <Section id="tools">
+        <div style={{ background: COLORS.white }}>
+          <div style={{ ...wrap, padding: "80px 24px" }}>
+            <div
+              style={{
+                fontSize: 13,
+                fontWeight: 600,
+                letterSpacing: 2,
+                color: COLORS.slalomBlue,
+                marginBottom: 12,
+                textTransform: "uppercase",
+              }}
+            >
+              Where to Start
+            </div>
+            <h2
+              style={{
+                fontSize: "clamp(28px, 4vw, 40px)",
+                fontWeight: 800,
+                margin: "0 0 8px",
+                lineHeight: 1.2,
+              }}
+            >
+              Pick a tool. Give it 30 minutes.
+              <br />
+              Build something.
+            </h2>
+            <p
+              style={{
+                fontSize: 17,
+                color: COLORS.darkGray,
+                lineHeight: 1.7,
+                maxWidth: 650,
+                marginBottom: 40,
+              }}
+            >
+              You don't need a plan. You don't need permission. Open one of these,
+              describe something you wish existed, and see what happens.
+            </p>
+
+            <div style={{ marginBottom: 36 }}>
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: COLORS.black,
+                  marginBottom: 12,
+                  textTransform: "uppercase",
+                  letterSpacing: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+              >
+                <span
+                  style={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: "50%",
+                    background: "#2E7D32",
+                    display: "inline-block",
+                  }}
+                />
+                Just Curious — Prompt to App, No Setup
+              </div>
+              <div style={{ display: "grid", gap: 12 }}>
+                <ToolCard
+                  name="Lovable"
+                  url="https://lovable.dev"
+                  tag="Free tier"
+                  description="Describe an app in plain English, get a working prototype in minutes. The fastest way to see what's possible."
+                />
+                <ToolCard
+                  name="Bolt.new"
+                  url="https://bolt.new"
+                  tag="Free tier"
+                  description="Browser-based app builder by StackBlitz. Full-stack from a single prompt — frontend, backend, database."
+                />
+                <ToolCard
+                  name="v0"
+                  url="https://v0.dev"
+                  tag="Free tier"
+                  description="Vercel's AI builder. Generates production-grade Next.js UI from descriptions. Great for polished interfaces."
+                />
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 36 }}>
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: COLORS.black,
+                  marginBottom: 12,
+                  textTransform: "uppercase",
+                  letterSpacing: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+              >
+                <span
+                  style={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: "50%",
+                    background: COLORS.slalomBlue,
+                    display: "inline-block",
+                  }}
+                />
+                Ready to Script — Automate What You Already Use
+              </div>
+              <div style={{ display: "grid", gap: 12 }}>
+                <ToolCard
+                  name="Google Apps Script + ChatGPT"
+                  url="https://script.google.com"
+                  tag="Free"
+                  description="Describe what you want automated in your spreadsheet. Paste the generated script into Apps Script. Press a button."
+                />
+                <ToolCard
+                  name="Replit"
+                  url="https://replit.com"
+                  tag="Free tier"
+                  description="Full cloud IDE with an AI agent. Build and run apps entirely in the browser with collaboration built in."
+                />
+              </div>
+            </div>
+
+            <div>
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: COLORS.black,
+                  marginBottom: 12,
+                  textTransform: "uppercase",
+                  letterSpacing: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+              >
+                <span
+                  style={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: "50%",
+                    background: COLORS.coralRed,
+                    display: "inline-block",
+                  }}
+                />
+                Ready to Build — Full Applications
+              </div>
+              <div style={{ display: "grid", gap: 12 }}>
+                <ToolCard
+                  name="Claude Code"
+                  url="https://docs.anthropic.com/en/docs/claude-code"
+                  tag="~$20/mo"
+                  description="Terminal-based AI that reads, writes, and refactors entire codebases. The power tool behind the tournament app."
+                />
+                <ToolCard
+                  name="Cursor"
+                  url="https://cursor.com"
+                  tag="Free tier"
+                  description="AI-native code editor. Deep codebase awareness, multi-file changes, and inline generation from natural language."
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* ─── CLOSING CTA ─── */}
+      <div
+        style={{
+          background: COLORS.slalomDark,
+          color: COLORS.white,
+          padding: "100px 24px",
+          textAlign: "center",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 600,
+            height: 600,
+            borderRadius: "50%",
+            background: COLORS.slalomBlue,
+            opacity: 0.08,
+          }}
+        />
+        <div style={{ ...wrap, position: "relative", zIndex: 1 }}>
+          <h2
+            style={{
+              fontSize: "clamp(32px, 5vw, 56px)",
+              fontWeight: 800,
+              margin: "0 0 16px",
+              lineHeight: 1.15,
+            }}
+          >
+            You already have the logic.
+          </h2>
+          <p
+            style={{
+              fontSize: "clamp(20px, 3vw, 28px)",
+              fontWeight: 600,
+              color: COLORS.cyan,
+              margin: "0 0 48px",
+            }}
+          >
+            Now you have the tools. Go build.
+          </p>
+          <a
+            href="#tools"
+            style={{
+              display: "inline-block",
+              padding: "14px 36px",
+              borderRadius: 99,
+              background: COLORS.cyan,
+              color: COLORS.slalomDark,
+              fontWeight: 800,
+              fontSize: 16,
+              textDecoration: "none",
+              transition: "opacity 0.2s, transform 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = "0.9";
+              e.currentTarget.style.transform = "translateY(-2px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = "1";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+          >
+            Choose a tool →
+          </a>
+          <p
+            style={{
+              fontSize: 13,
+              color: "rgba(255,255,255,0.4)",
+              margin: "40px 0 0",
+              fontStyle: "italic",
+            }}
+          >
+            P.s. This entire microsite took 5 minutes to build using Claude
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
