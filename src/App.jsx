@@ -519,101 +519,24 @@ function ScriptMockup() {
   );
 }
 
-/* ── Image carousel with lightbox ── */
-const CAROUSEL_IMAGES = [
-  { src: "/Admin1.png", alt: "Admin view 1" },
-  { src: "/Admin2.png", alt: "Admin view 2" },
-  { src: "/Parent_View.png", alt: "Parent view" },
-];
-
-function ImageCarousel() {
-  const [index, setIndex] = useState(0);
-  const [lightbox, setLightbox] = useState(false);
-  const total = CAROUSEL_IMAGES.length;
-
-  const prev = (e) => { e.stopPropagation(); setIndex((i) => (i - 1 + total) % total); };
-  const next = (e) => { e.stopPropagation(); setIndex((i) => (i + 1) % total); };
-
-  useEffect(() => {
-    if (!lightbox) return;
-    const handler = (e) => { if (e.key === "Escape") setLightbox(false); if (e.key === "ArrowLeft") setIndex((i) => (i - 1 + total) % total); if (e.key === "ArrowRight") setIndex((i) => (i + 1) % total); };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [lightbox, total]);
-
-  const img = CAROUSEL_IMAGES[index];
-
+/* ── System demo gifs ── */
+function SystemDemos() {
   return (
-    <>
-      {/* Carousel */}
-      <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", background: "#000", marginBottom: 32 }}>
-        <img
-          src={img.src}
-          alt={img.alt}
-          onClick={() => setLightbox(true)}
-          style={{ width: "100%", display: "block", maxHeight: 480, objectFit: "contain", cursor: "zoom-in" }}
-        />
-
-        {/* Prev / Next */}
-        {[{ label: "‹", dir: prev, side: "left" }, { label: "›", dir: next, side: "right" }].map(({ label, dir, side }) => (
-          <button
-            key={side}
-            onClick={dir}
-            style={{
-              position: "absolute", top: "50%", [side]: 12, transform: "translateY(-50%)",
-              background: "rgba(0,0,0,0.55)", color: "#fff", border: "none", borderRadius: 8,
-              width: 40, height: 40, fontSize: 22, lineHeight: 1, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-            }}
-          >
-            {label}
-          </button>
-        ))}
-
-        {/* Dots */}
-        <div style={{ position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 6 }}>
-          {CAROUSEL_IMAGES.map((_, i) => (
-            <button
-              key={i}
-              onClick={(e) => { e.stopPropagation(); setIndex(i); }}
-              style={{ width: i === index ? 20 : 8, height: 8, borderRadius: 99, border: "none", padding: 0, cursor: "pointer", background: i === index ? "#fff" : "rgba(255,255,255,0.45)", transition: "all 0.2s" }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Lightbox */}
-      {lightbox && (
-        <div
-          onClick={() => setLightbox(false)}
-          style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.92)", display: "flex", alignItems: "center", justifyContent: "center" }}
-        >
+    <div style={{ display: "flex", flexDirection: "column", gap: 32, marginBottom: 32 }}>
+      {[
+        { src: "/Admin_Console.gif", alt: "Admin Console demo", label: "Admin Console" },
+        { src: "/Public_Fixture.gif", alt: "Public Fixture View demo", label: "Public Fixture View" },
+      ].map(({ src, alt, label }) => (
+        <div key={src}>
+          <p style={{ margin: "0 0 10px", fontWeight: 600, fontSize: 15, color: "#cbd5e1" }}>{label}</p>
           <img
-            src={img.src}
-            alt={img.alt}
-            style={{ maxWidth: "90vw", maxHeight: "90vh", borderRadius: 12, objectFit: "contain", pointerEvents: "none" }}
+            src={src}
+            alt={alt}
+            style={{ width: "100%", display: "block", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)" }}
           />
-          {[{ label: "‹", dir: prev, side: "left" }, { label: "›", dir: next, side: "right" }].map(({ label, dir, side }) => (
-            <button
-              key={side}
-              onClick={dir}
-              style={{
-                position: "fixed", top: "50%", [side]: 24, transform: "translateY(-50%)",
-                background: "rgba(255,255,255,0.15)", color: "#fff", border: "none", borderRadius: 10,
-                width: 48, height: 48, fontSize: 26, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-              }}
-            >
-              {label}
-            </button>
-          ))}
-          <button
-            onClick={() => setLightbox(false)}
-            style={{ position: "fixed", top: 20, right: 24, background: "none", border: "none", color: "#fff", fontSize: 32, cursor: "pointer", lineHeight: 1 }}
-          >
-            ×
-          </button>
         </div>
-      )}
-    </>
+      ))}
+    </div>
   );
 }
 
@@ -1643,7 +1566,7 @@ export default function App() {
             </div>
 
             {/* Screenshots carousel */}
-            <ImageCarousel />
+            <SystemDemos />
 
             <div
               style={{
