@@ -1665,161 +1665,135 @@ export default function App() {
         </div>
       </Section>
 
-      {/* ─── THE PIVOT ─── */}
+      {/* ─── THE BIGGER PICTURE ─── */}
       <Section>
-        <div style={{ background: COLORS.white }}>
-          <div style={{ ...wrap, padding: "80px 24px" }}>
-            <div
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                letterSpacing: 2,
-                color: COLORS.slalomBlue,
-                marginBottom: 12,
-                textTransform: "uppercase",
-              }}
-            >
-              The Bigger Picture
+        <div style={{ background: "#080f1f", color: COLORS.white }}>
+          <div style={{ ...wrap, padding: "100px 24px" }}>
+
+            {/* Header row */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 64 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 3, color: COLORS.cyan, textTransform: "uppercase" }}>
+                The Bigger Picture
+              </div>
+              <h2 style={{ fontSize: "clamp(32px, 5vw, 54px)", fontWeight: 900, margin: 0, lineHeight: 1.1, maxWidth: 700 }}>
+                A New Essential Skill<br />
+                <span style={{ color: COLORS.cyan }}>for Consultants</span>
+              </h2>
             </div>
-            <h2
-              style={{
-                fontSize: "clamp(28px, 4vw, 40px)",
-                fontWeight: 800,
-                margin: "0 0 16px",
-                lineHeight: 1.2,
-              }}
-            >
-              A New Essential Skill for Consultants
-            </h2>
-            <p
-              style={{
-                fontSize: 17,
-                color: COLORS.darkGray,
-                lineHeight: 1.7,
-                maxWidth: 650,
-                marginBottom: 24,
-              }}
-            >
-              The same process behind the Cheshire Minis prototype is now being applied
-              to client work. But this is about more than one project — it's about how
-              we evolve as a team and as consultants.
-            </p>
-            <p
-              style={{
-                fontSize: 17,
-                color: COLORS.darkGray,
-                lineHeight: 1.7,
-                maxWidth: 650,
-                marginBottom: 24,
-              }}
-            >
-              We should be the team that leans in, experiments, and builds. Not just
-              talking about AI — actually using it. Learning what it can do, finding
-              where it falls short, and developing a fluency that our clients don't yet
-              have.
-            </p>
-            <p
-              style={{
-                fontSize: 17,
-                color: COLORS.darkGray,
-                lineHeight: 1.7,
-                maxWidth: 650,
-                marginBottom: 40,
-              }}
-            >
-              Think about how central PowerPoint became to consulting — the ability to
-              structure a clear argument and tell a compelling story in a deck is a core
-              professional skill. I think we're heading somewhere similar with this. The
-              ability to spin up a working app or dynamic site — quickly, cheaply, in
-              response to a client problem — could become just as fundamental. Not a
-              replacement for strategy or judgement, just another tool in the arsenal.
-              One that makes us sharper, more relevant, and harder to replicate.
-            </p>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                gap: 20,
-                marginBottom: 40,
-              }}
-            >
-              <div
-                style={{
-                  background: COLORS.surfaceLight,
-                  borderRadius: 12,
-                  padding: 28,
-                  border: `1px solid ${COLORS.lightGray}`,
-                }}
-              >
+
+            {/* Three principle cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 2, marginBottom: 2 }}>
+              {[
+                {
+                  number: "01",
+                  heading: "Lean In & Build",
+                  body: "We should be the team that actually uses AI — not just talks about it. Experiment, make things, find the edges of what's possible.",
+                  accent: COLORS.cyan,
+                },
+                {
+                  number: "02",
+                  heading: "Develop Real Fluency",
+                  body: "Learn what these tools can do and where they fall short. Develop a depth our clients don't yet have — that gap is where our value lives.",
+                  accent: COLORS.chartreuse,
+                },
+                {
+                  number: "03",
+                  heading: "Stay Ahead",
+                  body: "The consultants who remain relevant will be the ones who can move fast, show quickly, and build credibility before the first invoice.",
+                  accent: COLORS.purple,
+                },
+              ].map(({ number, heading, body, accent }) => (
                 <div
+                  key={number}
                   style={{
-                    fontSize: 13,
-                    fontWeight: 700,
-                    color: COLORS.darkGray,
-                    marginBottom: 12,
-                    textTransform: "uppercase",
-                    letterSpacing: 1,
+                    background: "rgba(255,255,255,0.04)",
+                    border: `1px solid rgba(255,255,255,0.08)`,
+                    borderTop: `3px solid ${accent}`,
+                    padding: "36px 28px",
                   }}
                 >
-                  Delivery & Strategy
+                  <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 3, color: accent, marginBottom: 16 }}>{number}</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 12, lineHeight: 1.3 }}>{heading}</div>
+                  <div style={{ fontSize: 15, color: "rgba(255,255,255,0.6)", lineHeight: 1.7 }}>{body}</div>
                 </div>
-                <div style={{ fontSize: 15, color: COLORS.darkGray, lineHeight: 1.6 }}>
-                  <strong style={{ color: COLORS.black }}>Focus:</strong> MVP & Vision
-                  Alignment
-                  <br />
-                  <strong style={{ color: COLORS.black }}>Toolset:</strong> AI Generators
-                  & Accessible UI
-                  <br />
-                  <strong style={{ color: COLORS.black }}>Outcome:</strong> Client Buy-in
-                  & Tangible Proof
-                </div>
-              </div>
-              <div
-                style={{
-                  background: COLORS.surfaceLight,
-                  borderRadius: 12,
-                  padding: 28,
-                  border: `1px solid ${COLORS.lightGray}`,
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 700,
-                    color: COLORS.darkGray,
-                    marginBottom: 12,
-                    textTransform: "uppercase",
-                    letterSpacing: 1,
-                  }}
-                >
-                  Build & Engineering
-                </div>
-                <div style={{ fontSize: 15, color: COLORS.darkGray, lineHeight: 1.6 }}>
-                  <strong style={{ color: COLORS.black }}>Focus:</strong> Security, Scale
-                  & Robustness
-                  <br />
-                  <strong style={{ color: COLORS.black }}>Toolset:</strong> Deep Technical
-                  Architecture
-                  <br />
-                  <strong style={{ color: COLORS.black }}>Outcome:</strong>{" "}
-                  Production-Ready Software
-                </div>
-              </div>
+              ))}
             </div>
+
+            {/* Pull quote */}
             <div
               style={{
-                padding: 24,
+                borderLeft: `4px solid ${COLORS.cyan}`,
+                padding: "32px 40px",
+                background: "rgba(27,225,242,0.05)",
+                marginTop: 48,
+                marginBottom: 48,
+              }}
+            >
+              <p style={{ fontSize: "clamp(18px, 2.5vw, 26px)", fontWeight: 700, lineHeight: 1.5, margin: 0, maxWidth: 780 }}>
+                "Think about how central PowerPoint became to consulting. I think we're heading somewhere similar. The ability to spin up a working app — quickly, in response to a client problem — could become just as fundamental."
+              </p>
+            </div>
+
+            {/* Two role cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, marginBottom: 24 }}>
+              {[
+                {
+                  label: "Delivery & Strategy",
+                  rows: [
+                    ["Focus", "MVP & Vision Alignment"],
+                    ["Toolset", "AI Generators & Accessible UI"],
+                    ["Outcome", "Client Buy-in & Tangible Proof"],
+                  ],
+                },
+                {
+                  label: "Build & Engineering",
+                  rows: [
+                    ["Focus", "Security, Scale & Robustness"],
+                    ["Toolset", "Deep Technical Architecture"],
+                    ["Outcome", "Production-Ready Software"],
+                  ],
+                },
+              ].map(({ label, rows }) => (
+                <div
+                  key={label}
+                  style={{
+                    background: "rgba(255,255,255,0.04)",
+                    borderRadius: 12,
+                    padding: 28,
+                    border: "1px solid rgba(255,255,255,0.1)",
+                  }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 20 }}>
+                    {label}
+                  </div>
+                  {rows.map(([k, v]) => (
+                    <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 16, padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 14 }}>
+                      <span style={{ color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>{k}</span>
+                      <span style={{ color: COLORS.white, textAlign: "right" }}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom banner */}
+            <div
+              style={{
+                padding: "28px 32px",
                 borderRadius: 12,
                 background: `linear-gradient(135deg, ${COLORS.slalomDark} 0%, ${COLORS.slalomBlue} 100%)`,
-                color: COLORS.white,
+                display: "flex",
+                alignItems: "center",
+                gap: 16,
               }}
             >
-              <p style={{ fontSize: 15, margin: 0, lineHeight: 1.6 }}>
-                This isn't about replacing the build function. It's about engaging client
-                imagination so our build colleagues have a validated target.{" "}
+              <div style={{ width: 4, height: 40, background: COLORS.cyan, borderRadius: 2, flexShrink: 0 }} />
+              <p style={{ fontSize: 15, margin: 0, lineHeight: 1.6, color: COLORS.white }}>
+                This isn't about replacing the build function. It's about engaging client imagination so our build colleagues have a validated target.{" "}
                 <strong>Prototyping is our new core differentiator.</strong>
               </p>
             </div>
+
           </div>
         </div>
       </Section>
