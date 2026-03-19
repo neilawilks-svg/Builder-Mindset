@@ -1738,19 +1738,19 @@ export default function App() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, marginBottom: 24 }}>
               {[
                 {
-                  label: "Delivery & Strategy",
+                  label: "For the Team",
                   rows: [
-                    ["Focus", "MVP & Vision Alignment"],
-                    ["Toolset", "AI Generators & Accessible UI"],
-                    ["Outcome", "Client Buy-in & Tangible Proof"],
+                    ["Focus", "Learning by doing"],
+                    ["Toolset", "AI prototyping & rapid builds"],
+                    ["Outcome", "Fluency that keeps us relevant"],
                   ],
                 },
                 {
-                  label: "Build & Engineering",
+                  label: "For Clients",
                   rows: [
-                    ["Focus", "Security, Scale & Robustness"],
-                    ["Toolset", "Deep Technical Architecture"],
-                    ["Outcome", "Production-Ready Software"],
+                    ["Focus", "Bespoke working prototypes"],
+                    ["Toolset", "Dynamic apps over static decks"],
+                    ["Outcome", "Faster buy-in & a validated target"],
                   ],
                 },
               ].map(({ label, rows }) => (
@@ -1789,8 +1789,8 @@ export default function App() {
             >
               <div style={{ width: 4, height: 40, background: COLORS.cyan, borderRadius: 2, flexShrink: 0 }} />
               <p style={{ fontSize: 15, margin: 0, lineHeight: 1.6, color: COLORS.white }}>
-                This isn't about replacing the build function. It's about engaging client imagination so our build colleagues have a validated target.{" "}
-                <strong>Prototyping is our new core differentiator.</strong>
+                This isn't a side project. It's how we future-proof ourselves as consultants — and bring something genuinely new to every client conversation.{" "}
+                <strong>Building is the new deck.</strong>
               </p>
             </div>
 
