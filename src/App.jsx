@@ -93,6 +93,16 @@ function useActiveSection(ids) {
   return active;
 }
 
+/* ── Scroll-reveal hook — fires once when element enters viewport ── */
+function useSectionReveal(threshold = 0.08) {
+  const [ref, visible] = useInView(threshold);
+  const anim = (name, delay) =>
+    visible
+      ? { animation: `${name} 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}ms both` }
+      : { opacity: 0 };
+  return [ref, visible, anim];
+}
+
 /* Global CSS keyframe definitions */
 function GlobalStyles() {
   return (
@@ -105,9 +115,17 @@ function GlobalStyles() {
         from { opacity: 0; transform: translateX(-18px); }
         to   { opacity: 1; transform: translateX(0); }
       }
+      @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(18px); }
+        to   { opacity: 1; transform: translateX(0); }
+      }
       @keyframes scaleIn {
         from { opacity: 0; transform: scale(0.82); }
         to   { opacity: 1; transform: scale(1); }
+      }
+      @keyframes popIn {
+        from { opacity: 0; transform: scale(0.88) translateY(10px); }
+        to   { opacity: 1; transform: scale(1) translateY(0); }
       }
       @keyframes countPop {
         0%   { transform: scale(1); }
@@ -116,6 +134,23 @@ function GlobalStyles() {
       }
       /* Force h1 white regardless of browser extension overrides */
       #hero-title { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+      /* Level section card hover lift */
+      .level-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .level-card:hover {
+        transform: translateY(-4px) !important;
+        box-shadow: 0 12px 32px rgba(0,0,0,0.09);
+      }
+      /* Level 3 constraint chip hover pop */
+      .constraint-chip {
+        transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+      }
+      .constraint-chip:hover {
+        transform: scale(1.07);
+        background: #FF4D5F !important;
+        color: #fff !important;
+      }
     `}</style>
   );
 }
@@ -818,7 +853,7 @@ function ToolCard({ name, url, description, tag, index = 0 }) {
   );
 }
 
-function LevelBadge({ level, color }) {
+function LevelBadge({ level, color, style: extraStyle }) {
   return (
     <div
       style={{
@@ -833,7 +868,7 @@ function LevelBadge({ level, color }) {
         fontWeight: 700,
         letterSpacing: 0.5,
         marginBottom: 16,
-        animation: "slideInLeft 0.5s cubic-bezier(0.22,1,0.36,1) both",
+        ...extraStyle,
       }}
     >
       LEVEL {level}
@@ -952,6 +987,9 @@ export default function App() {
   const [scrollY, setScrollY] = useState(0);
   const [mounted, setMounted] = useState(false);
   const activeSection = useActiveSection(SECTION_IDS);
+  const [l1Ref, , l1Anim] = useSectionReveal(0.06);
+  const [l2Ref, , l2Anim] = useSectionReveal(0.06);
+  const [l3Ref, , l3Anim] = useSectionReveal(0.06);
 
   useEffect(() => {
     const h = () => setScrollY(window.scrollY);
@@ -1251,14 +1289,15 @@ export default function App() {
       {/* ─── LEVEL 1 ─── */}
       <Section id="level1">
         <div style={{ background: COLORS.white }}>
-          <div style={{ ...wrap, padding: "80px 24px" }}>
-            <LevelBadge level={1} color={COLORS.darkGray} />
+          <div ref={l1Ref} style={{ ...wrap, padding: "80px 24px" }}>
+            <LevelBadge level={1} color={COLORS.darkGray} style={l1Anim("slideInLeft", 0)} />
             <h2
               style={{
                 fontSize: "clamp(28px, 4vw, 40px)",
                 fontWeight: 800,
                 margin: "0 0 8px",
                 lineHeight: 1.2,
+                ...l1Anim("fadeUp", 80),
               }}
             >
               Formulas
@@ -1269,6 +1308,7 @@ export default function App() {
                 color: COLORS.slalomBlue,
                 fontWeight: 600,
                 marginBottom: 16,
+                ...l1Anim("fadeUp", 160),
               }}
             >
               ChatGPT + Google Sheets
@@ -1280,6 +1320,7 @@ export default function App() {
                 lineHeight: 1.7,
                 maxWidth: 650,
                 marginBottom: 32,
+                ...l1Anim("fadeUp", 240),
               }}
             >
               Parents submit availability via Google Forms. The data flows into a
@@ -1295,6 +1336,7 @@ export default function App() {
                 borderLeft: `4px solid ${COLORS.slalomBlue}`,
                 background: COLORS.blueAccentBg,
                 borderRadius: "0 12px 12px 0",
+                ...l1Anim("slideInLeft", 340),
               }}
             >
               <div
@@ -1326,10 +1368,12 @@ export default function App() {
             <img
               src="/TeamAssignment.gif"
               alt="Team assignment demo"
-              style={{ width: "100%", borderRadius: 12, marginBottom: 24 }}
+              style={{ width: "100%", borderRadius: 12, marginBottom: 24, ...l1Anim("fadeUp", 420) }}
             />
 
-            <SheetMockup />
+            <div style={l1Anim("scaleIn", 500)}>
+              <SheetMockup />
+            </div>
 
             <div
               style={{
@@ -1338,6 +1382,7 @@ export default function App() {
                 background: COLORS.surfaceLight,
                 borderRadius: 12,
                 border: `1px solid ${COLORS.lightGray}`,
+                ...l1Anim("fadeUp", 580),
               }}
             >
               <p style={{ fontSize: 14, color: COLORS.darkGray, margin: 0, lineHeight: 1.6 }}>
@@ -1352,14 +1397,15 @@ export default function App() {
 
       {/* ─── LEVEL 2 ─── */}
       <Section id="level2">
-        <div style={{ ...wrap, padding: "80px 24px" }}>
-          <LevelBadge level={2} color={COLORS.slalomBlue} />
+        <div ref={l2Ref} style={{ ...wrap, padding: "80px 24px" }}>
+          <LevelBadge level={2} color={COLORS.slalomBlue} style={l2Anim("slideInLeft", 0)} />
           <h2
             style={{
               fontSize: "clamp(28px, 4vw, 40px)",
               fontWeight: 800,
               margin: "0 0 8px",
               lineHeight: 1.2,
+              ...l2Anim("fadeUp", 80),
             }}
           >
             Scripts
@@ -1370,6 +1416,7 @@ export default function App() {
               color: COLORS.slalomBlue,
               fontWeight: 600,
               marginBottom: 16,
+              ...l2Anim("fadeUp", 160),
             }}
           >
             ChatGPT + Google Apps Script
@@ -1381,6 +1428,7 @@ export default function App() {
               lineHeight: 1.7,
               maxWidth: 650,
               marginBottom: 32,
+              ...l2Anim("fadeUp", 240),
             }}
           >
             Formulas weren't enough. Three one-click scripts handled the jobs that were
@@ -1415,11 +1463,13 @@ export default function App() {
             ].map((p, i) => (
               <div
                 key={i}
+                className="level-card"
                 style={{
                   background: COLORS.white,
                   borderRadius: 12,
                   padding: 24,
                   border: `1px solid ${COLORS.lightGray}`,
+                  ...l2Anim("fadeUp", 320 + i * 90),
                 }}
               >
                 <div style={{ fontSize: 12, color: COLORS.darkGray, marginBottom: 6 }}>
@@ -1442,7 +1492,9 @@ export default function App() {
             ))}
           </div>
 
-          <ScriptMockup />
+          <div style={l2Anim("scaleIn", 600)}>
+            <ScriptMockup />
+          </div>
 
           <div
             style={{
@@ -1451,6 +1503,7 @@ export default function App() {
               background: COLORS.white,
               borderRadius: 12,
               border: `1px solid ${COLORS.lightGray}`,
+              ...l2Anim("fadeUp", 680),
             }}
           >
             <p style={{ fontSize: 14, color: COLORS.darkGray, margin: 0, lineHeight: 1.6 }}>
@@ -1464,14 +1517,15 @@ export default function App() {
       {/* ─── LEVEL 3 ─── */}
       <Section id="level3">
         <div style={{ background: COLORS.white }}>
-          <div style={{ ...wrap, padding: "80px 24px" }}>
-            <LevelBadge level={3} color={COLORS.coralRed} />
+          <div ref={l3Ref} style={{ ...wrap, padding: "80px 24px" }}>
+            <LevelBadge level={3} color={COLORS.coralRed} style={l3Anim("slideInLeft", 0)} />
             <h2
               style={{
                 fontSize: "clamp(28px, 4vw, 40px)",
                 fontWeight: 800,
                 margin: "0 0 8px",
                 lineHeight: 1.2,
+                ...l3Anim("fadeUp", 80),
               }}
             >
               The Crucible
@@ -1482,6 +1536,7 @@ export default function App() {
                 color: COLORS.coralRed,
                 fontWeight: 600,
                 marginBottom: 16,
+                ...l3Anim("fadeUp", 160),
               }}
             >
               Claude Code — 70+ Teams, 1 App, 1 Hour
@@ -1493,6 +1548,7 @@ export default function App() {
                 lineHeight: 1.7,
                 maxWidth: 650,
                 marginBottom: 32,
+                ...l3Anim("fadeUp", 240),
               }}
             >
               The annual Cheshire Minis tournament: organising match scheduling for 70+ teams —
@@ -1507,7 +1563,7 @@ export default function App() {
 
             {/* Constraint chips */}
             <div style={{ marginBottom: 32 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: COLORS.darkGray, marginBottom: 12 }}>
+              <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: COLORS.darkGray, marginBottom: 12, ...l3Anim("fadeUp", 320) }}>
                 Constraints handled automatically
               </p>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -1520,9 +1576,10 @@ export default function App() {
                   "Refs don't officiate their own team",
                   "Refs free when officiating",
                   "Dynamic rescheduling",
-                ].map((c) => (
+                ].map((c, i) => (
                   <span
                     key={c}
+                    className="constraint-chip"
                     style={{
                       padding: "6px 14px",
                       borderRadius: 99,
@@ -1530,6 +1587,8 @@ export default function App() {
                       fontWeight: 600,
                       background: COLORS.coralAccentBg,
                       color: COLORS.coralRed,
+                      display: "inline-block",
+                      ...l3Anim("popIn", 360 + i * 45),
                     }}
                   >
                     {c}
@@ -1547,6 +1606,7 @@ export default function App() {
                 color: COLORS.white,
                 textAlign: "center",
                 minWidth: 160,
+                ...l3Anim("popIn", 380),
               }}>
                 <div style={{ fontSize: "clamp(52px, 8vw, 72px)", fontWeight: 900, lineHeight: 1 }}>1h</div>
                 <div style={{ fontSize: 13, opacity: 0.9, marginTop: 8, lineHeight: 1.4 }}>
@@ -1560,7 +1620,9 @@ export default function App() {
             </div>
 
             {/* Screenshots carousel */}
-            <SystemDemos />
+            <div style={l3Anim("fadeUp", 500)}>
+              <SystemDemos />
+            </div>
 
             <div
               style={{
@@ -1569,6 +1631,7 @@ export default function App() {
                 borderRadius: 12,
                 border: `1px solid ${COLORS.lightGray}`,
                 borderLeft: `4px solid ${COLORS.coralRed}`,
+                ...l3Anim("fadeUp", 580),
               }}
             >
               <p style={{ fontSize: 14, color: COLORS.darkGray, margin: 0, lineHeight: 1.6 }}>
