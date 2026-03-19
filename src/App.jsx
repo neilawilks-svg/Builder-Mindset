@@ -1383,9 +1383,9 @@ export default function App() {
               marginBottom: 32,
             }}
           >
-            Formulas weren't enough. Fixture generation, WhatsApp announcements, and
-            RFU payment reconciliation each needed automation. ChatGPT produced Apps
-            Scripts that ran from one-click buttons inside the spreadsheet.
+            Formulas weren't enough. Three one-click scripts handled the jobs that were
+            eating hours of manual admin — fixture scheduling, parent comms, and
+            membership reconciliation — all running directly from the spreadsheet.
           </p>
 
           <div
@@ -1398,19 +1398,19 @@ export default function App() {
           >
             {[
               {
-                from: "Parent WhatsApp messages",
-                via: "Google Forms",
-                to: "Clean Availability",
+                from: "Team availability & pitch slots",
+                via: "Fixture Generator Script",
+                to: "Auto-scheduled fixture list",
               },
               {
-                from: "Mismatched RFU Export",
+                from: "Match details & day updates",
+                via: "One-button WhatsApp Draft",
+                to: "Ready-to-send parent comms",
+              },
+              {
+                from: "RFU membership export vs player roster",
                 via: "Reconciliation Script",
-                to: "Paid / Unpaid Roster",
-              },
-              {
-                from: "Manual Match Updates",
-                via: "Broadcast Script",
-                to: "WhatsApp Announcements",
+                to: "Paid / unpaid status per player",
               },
             ].map((p, i) => (
               <div
