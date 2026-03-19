@@ -524,8 +524,9 @@ function SystemDemos() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 32, marginBottom: 32 }}>
       {[
-        { src: "/Admin_Console.gif", alt: "Admin Console demo", label: "Admin Console" },
-        { src: "/Public_Fixture.gif", alt: "Public Fixture View demo", label: "Public Fixture View" },
+        { src: "/Admin_Console1.gif", alt: "Admin Console demo 1", label: "Admin Console" },
+        { src: "/Admin_Console2.gif", alt: "Admin Console demo 2", label: "Admin Console" },
+        { src: "/Public_Fixture1.gif", alt: "Public Fixture View demo", label: "Public Fixture View" },
       ].map(({ src, alt, label }) => (
         <div key={src}>
           <p style={{ margin: "0 0 10px", fontWeight: 600, fontSize: 15, color: "#cbd5e1" }}>{label}</p>
