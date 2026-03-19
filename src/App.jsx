@@ -1563,7 +1563,6 @@ export default function App() {
                 </div>
               </div>
 
-              <TournamentMockup />
             </div>
 
             {/* Screenshots carousel */}
