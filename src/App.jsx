@@ -1679,7 +1679,7 @@ export default function App() {
                 textTransform: "uppercase",
               }}
             >
-              The Pivot
+              The Bigger Picture
             </div>
             <h2
               style={{
@@ -1689,8 +1689,35 @@ export default function App() {
                 lineHeight: 1.2,
               }}
             >
-              The Death of the Static Pitch
+              A New Essential Skill for Consultants
             </h2>
+            <p
+              style={{
+                fontSize: 17,
+                color: COLORS.darkGray,
+                lineHeight: 1.7,
+                maxWidth: 650,
+                marginBottom: 24,
+              }}
+            >
+              The same process behind the Cheshire Minis prototype is now being applied
+              to client work. But this is about more than one project — it's about how
+              we evolve as a team and as consultants.
+            </p>
+            <p
+              style={{
+                fontSize: 17,
+                color: COLORS.darkGray,
+                lineHeight: 1.7,
+                maxWidth: 650,
+                marginBottom: 24,
+              }}
+            >
+              We should be the team that leans in, experiments, and builds. Not just
+              talking about AI — actually using it. Learning what it can do, finding
+              where it falls short, and developing a fluency that our clients don't yet
+              have.
+            </p>
             <p
               style={{
                 fontSize: 17,
@@ -1700,10 +1727,13 @@ export default function App() {
                 marginBottom: 40,
               }}
             >
-              The exact same process used for the Cheshire Minis is now being deployed
-              for client work. Why arrive with a static slide deck explaining a
-              theoretical solution, when you can arrive with a bespoke, working
-              prototype — built in the same amount of time?
+              Think about how central PowerPoint became to consulting — the ability to
+              structure a clear argument and tell a compelling story in a deck is a core
+              professional skill. I think we're heading somewhere similar with this. The
+              ability to spin up a working app or dynamic site — quickly, cheaply, in
+              response to a client problem — could become just as fundamental. Not a
+              replacement for strategy or judgement, just another tool in the arsenal.
+              One that makes us sharper, more relevant, and harder to replicate.
             </p>
             <div
               style={{
